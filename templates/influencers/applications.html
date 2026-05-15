@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}My Applications - Wariblo{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h2 class="mb-4">My Applications</h2>
+    
+    {% if applications %}
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Campaign</th>
+                        <th>Pitch</th>
+                        <th>Proposed Price</th>
+                        <th>Status</th>
+                        <th>Applied</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for application in applications %}
+                        <tr>
+                            <td><a href="{% url 'campaign_detail' application.campaign.pk %}">{{ application.campaign.title }}</a></td>
+                            <td>{{ application.pitch|truncatewords:10 }}</td>
+                            <td>${{ application.proposed_price }}</td>
+                            <td><span class="status-badge status-{{ application.status }}">{{ application.status|title }}</span></td>
+                            <td>{{ application.created_at|date:"M d, Y" }}</td>
+                            <td>
+                                <a href="{% url 'application_detail' application.pk %}" class="btn btn-sm btn-outline-primary">View</a>
+                                {% if application.is_pending %}
+                                    <a href="{% url 'application_withdraw' application.pk %}" class="btn btn-sm btn-outline-danger">Withdraw</a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% include 'pagination.html' %}
+    {% else %}
+        <div class="alert alert-info">
+            You haven't applied to any campaigns yet. <a href="{% url 'influencer_campaigns' %}">Browse campaigns</a> to get started.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

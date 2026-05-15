@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% block title %}Advertiser Dashboard - Wariblo{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card mb-4">
+                <div class="card-body text-center">
+                    {% if profile.logo %}
+                        <img src="{{ profile.logo.url }}" class="mb-3" width="100" height="100">
+                    {% else %}
+                        <div class="rounded bg-secondary d-inline-flex align-items-center justify-content-center mb-3" style="width: 100px; height: 100px;">
+                            <i class="bi bi-building text-white" style="font-size: 3rem;"></i>
+                        </div>
+                    {% endif %}
+                    <h5>{{ profile.company_name }}</h5>
+                    <p class="text-muted">{{ profile.industry }}</p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="card-title">Quick Links</h6>
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'advertiser_profile_edit' %}" class="btn btn-outline-primary btn-sm">Edit Profile</a>
+                        <a href="{% url 'campaign_create' %}" class="btn btn-outline-primary btn-sm">Create Campaign</a>
+                        <a href="{% url 'advertiser_campaigns' %}" class="btn btn-outline-primary btn-sm">My Campaigns</a>
+                        <a href="{% url 'inbox' %}" class="btn btn-outline-primary btn-sm">Messages</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <h2 class="mb-4">Dashboard</h2>
+            
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h6 class="card-title">Total Campaigns</h6>
+                            <h3>{{ my_campaigns|length }}</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h6 class="card-title">Open Campaigns</h6>
+                            <h3>{{ open_campaigns_count }}</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h6 class="card-title">Total Applications</h6>
+                            <h3>{% for campaign in my_campaigns %}{{ campaign.applications_count }}{% endfor %}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <h4 class="mb-3">Recent Campaigns</h4>
+            {% if my_campaigns %}
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Status</th>
+                                <th>Budget</th>
+                                <th>Applications</th>
+                                <th>Created</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for campaign in my_campaigns %}
+                                <tr>
+                                    <td><a href="{% url 'campaign_detail' campaign.pk %}">{{ campaign.title }}</a></td>
+                                    <td><span class="status-badge status-{{ campaign.status }}">{{ campaign.status|title }}</span></td>
+                                    <td>${{ campaign.budget }}</td>
+                                    <td>{{ campaign.applications_count }}</td>
+                                    <td>{{ campaign.created_at|date:"M d, Y" }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p class="text-muted">No campaigns yet. <a href="{% url 'campaign_create' %}">Create your first campaign</a> to get started.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

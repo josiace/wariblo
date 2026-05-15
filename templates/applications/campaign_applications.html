@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block title %}Applications for {{ campaign.title }} - Wariblo{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Applications for {{ campaign.title }}</h2>
+        <a href="{% url 'campaign_detail' campaign.pk %}" class="btn btn-secondary">Back to Campaign</a>
+    </div>
+    
+    {% if applications %}
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Influencer</th>
+                        <th>Pitch</th>
+                        <th>Proposed Price</th>
+                        <th>Status</th>
+                        <th>Applied</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for application in applications %}
+                        <tr>
+                            <td>{{ application.influencer.full_name }}</td>
+                            <td>{{ application.pitch|truncatewords:10 }}</td>
+                            <td>${{ application.proposed_price }}</td>
+                            <td><span class="status-badge status-{{ application.status }}">{{ application.status|title }}</span></td>
+                            <td>{{ application.created_at|date:"M d, Y" }}</td>
+                            <td>
+                                <a href="{% url 'application_detail' application.pk %}" class="btn btn-sm btn-outline-primary">View</a>
+                                {% if application.is_pending %}
+                                    <a href="{% url 'application_accept' application.pk %}" class="btn btn-sm btn-outline-success">Accept</a>
+                                    <a href="{% url 'application_reject' application.pk %}" class="btn btn-sm btn-outline-danger">Reject</a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% include 'pagination.html' %}
+    {% else %}
+        <div class="alert alert-info">No applications received yet.</div>
+    {% endif %}
+</div>
+{% endblock %}

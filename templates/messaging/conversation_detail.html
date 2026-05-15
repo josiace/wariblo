@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}Conversation - Wariblo{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="mb-4">Conversation</h2>
+                    
+                    <div class="mb-4" style="max-height: 400px; overflow-y: auto;">
+                        {% for message in messages %}
+                            <div class="mb-3 {% if message.sender == user %}text-end{% else %}text-start{% endif %}">
+                                <div class="d-inline-block {% if message.sender == user %}bg-primary text-white{% else %}bg-light{% endif %} rounded p-3" style="max-width: 70%;">
+                                    <p class="mb-1">{{ message.content }}</p>
+                                    <small class="{% if message.sender == user %}text-white-50{% else %}text-muted{% endif %}">{{ message.created_at|date:"H:i" }}</small>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="input-group">
+                            {{ form.content }}
+                            <button type="submit" class="btn btn-primary">Send</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

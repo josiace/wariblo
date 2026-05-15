@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}Apply to Campaign - Wariblo{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body p-5">
+                    <h2 class="mb-4">Apply to {{ campaign.title }}</h2>
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="{{ form.pitch.id_for_label }}" class="form-label">Your Pitch</label>
+                            {{ form.pitch }}
+                            <small class="form-text text-muted">Tell the advertiser why you're the perfect fit for this campaign.</small>
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.proposed_price.id_for_label }}" class="form-label">Proposed Price ($)</label>
+                            {{ form.proposed_price }}
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit Application</button>
+                        <a href="{% url 'campaign_detail' campaign.pk %}" class="btn btn-secondary">Cancel</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

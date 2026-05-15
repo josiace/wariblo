@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block title %}Complete Profile - Wariblo{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body p-5">
+                    <h2 class="mb-4">{% if form.instance.pk %}Edit Profile{% else %}Complete Your Profile{% endif %}</h2>
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.full_name.id_for_label }}" class="form-label">Full Name</label>
+                                {{ form.full_name }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.niche.id_for_label }}" class="form-label">Niche</label>
+                                {{ form.niche }}
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.bio.id_for_label }}" class="form-label">Bio</label>
+                            {{ form.bio }}
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.instagram_followers.id_for_label }}" class="form-label">Instagram Followers</label>
+                                {{ form.instagram_followers }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.tiktok_followers.id_for_label }}" class="form-label">TikTok Followers</label>
+                                {{ form.tiktok_followers }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.youtube_subscribers.id_for_label }}" class="form-label">YouTube Subscribers</label>
+                                {{ form.youtube_subscribers }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.twitter_followers.id_for_label }}" class="form-label">Twitter Followers</label>
+                                {{ form.twitter_followers }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.rate_per_post.id_for_label }}" class="form-label">Rate per Post ($)</label>
+                                {{ form.rate_per_post }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.location.id_for_label }}" class="form-label">Location</label>
+                                {{ form.location }}
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.profile_image.id_for_label }}" class="form-label">Profile Image</label>
+                            {{ form.profile_image }}
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save Profile</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

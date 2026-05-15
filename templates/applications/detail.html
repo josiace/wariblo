@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}Application Details - Wariblo{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="mb-4">Application Details</h2>
+                    <div class="mb-3">
+                        <strong>Campaign:</strong> <a href="{% url 'campaign_detail' application.campaign.pk %}">{{ application.campaign.title }}</a>
+                    </div>
+                    <div class="mb-3">
+                        <strong>Influencer:</strong> {{ application.influencer.full_name }}
+                    </div>
+                    <div class="mb-3">
+                        <strong>Status:</strong> <span class="status-badge status-{{ application.status }}">{{ application.status|title }}</span>
+                    </div>
+                    <div class="mb-3">
+                        <strong>Proposed Price:</strong> ${{ application.proposed_price }}
+                    </div>
+                    <div class="mb-3">
+                        <strong>Pitch:</strong>
+                        <p>{{ application.pitch }}</p>
+                    </div>
+                    <div class="mb-3">
+                        <strong>Applied:</strong> {{ application.created_at|date:"M d, Y H:i" }}
+                    </div>
+                    {% if user.is_advertiser and application.is_pending %}
+                        <div class="mt-4">
+                            <a href="{% url 'application_accept' application.pk %}" class="btn btn-success">Accept</a>
+                            <a href="{% url 'application_reject' application.pk %}" class="btn btn-danger">Reject</a>
+                        </div>
+                    {% endif %}
+                    <a href="{% if user.is_influencer %}{% url 'influencer_applications' %}{% else %}{% url 'campaign_applications' application.campaign.pk %}{% endif %}" class="btn btn-secondary mt-3">Back</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

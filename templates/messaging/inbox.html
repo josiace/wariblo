@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block title %}Messages - Wariblo{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h2 class="mb-4">Messages</h2>
+    
+    {% if conversations %}
+        <div class="list-group">
+            {% for conversation in conversations %}
+                <a href="{% url 'conversation_detail' conversation.pk %}" class="list-group-item list-group-item-action">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1">
+                            {% for participant in conversation.participants.all %}
+                                {% if participant != user %}
+                                    {{ participant.email }}
+                                {% endif %}
+                            {% endfor %}
+                        </h5>
+                        <small>{{ conversation.updated_at|date:"M d, Y H:i" }}</small>
+                    </div>
+                    <p class="mb-1">
+                        {% if conversation.last_message %}
+                            {{ conversation.last_message.content|truncatewords:15 }}
+                        {% else %}
+                            No messages yet
+                        {% endif %}
+                    </p>
+                </a>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info">No conversations yet. Start a conversation with someone!</div>
+    {% endif %}
+</div>
+{% endblock %}

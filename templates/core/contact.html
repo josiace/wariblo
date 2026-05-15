@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+
+{% block title %}Contact - Wariblo{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card">
+                <div class="card-body">
+                    <h1 class="card-title text-center mb-4">Contactez-nous</h1>
+                    <p class="lead text-center mb-5">Des questions? Nous aimerions avoir de vos nouvelles.</p>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <div class="contact-info">
+                                <div class="contact-icon">📧</div>
+                                <div class="contact-title">Email</div>
+                                <div class="contact-value">contact@wariblo.com</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <div class="contact-info">
+                                <div class="contact-icon">📱</div>
+                                <div class="contact-title">Téléphone</div>
+                                <div class="contact-value">+221 77 123 45 67</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <div class="contact-info">
+                                <div class="contact-icon">📍</div>
+                                <div class="contact-title">Adresse</div>
+                                <div class="contact-value">Dakar, Sénégal</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <div class="contact-info">
+                                <div class="contact-icon">🌐</div>
+                                <div class="contact-title">Réseaux</div>
+                                <div class="contact-value">@wariblo</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="section-divider"></div>
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                {{ form.non_field_errors }}
+                            </div>
+                        {% endif %}
+                        <div class="form-group">
+                            <label for="{{ form.name.id_for_label }}" class="form-label">Nom</label>
+                            {{ form.name }}
+                            {% if form.name.errors %}
+                                <div class="form-error">{{ form.name.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            <label for="{{ form.email.id_for_label }}" class="form-label">Email</label>
+                            {{ form.email }}
+                            {% if form.email.errors %}
+                                <div class="form-error">{{ form.email.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            <label for="{{ form.subject.id_for_label }}" class="form-label">Sujet</label>
+                            {{ form.subject }}
+                            {% if form.subject.errors %}
+                                <div class="form-error">{{ form.subject.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            <label for="{{ form.message.id_for_label }}" class="form-label">Message</label>
+                            {{ form.message }}
+                            {% if form.message.errors %}
+                                <div class="form-error">{{ form.message.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Envoyer le message</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.contact-info {
+    text-align: center;
+    padding: 1.5rem;
+    background: var(--bg-light);
+    border-radius: var(--border-radius);
+    transition: all 0.3s ease;
+}
+
+.contact-info:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow);
+}
+
+.contact-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.contact-title {
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 0.5rem;
+}
+
+.contact-value {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+}
+
+.section-divider {
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
+    margin: 2rem 0;
+}
+</style>
+{% endblock %}

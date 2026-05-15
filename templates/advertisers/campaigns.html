@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}My Campaigns - Wariblo{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>My Campaigns</h2>
+        <a href="{% url 'campaign_create' %}" class="btn btn-primary">Create Campaign</a>
+    </div>
+    
+    {% if campaigns %}
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Niche</th>
+                        <th>Platform</th>
+                        <th>Budget</th>
+                        <th>Status</th>
+                        <th>Applications</th>
+                        <th>Deadline</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for campaign in campaigns %}
+                        <tr>
+                            <td><a href="{% url 'campaign_detail' campaign.pk %}">{{ campaign.title }}</a></td>
+                            <td>{{ campaign.niche }}</td>
+                            <td>{{ campaign.platform|title }}</td>
+                            <td>${{ campaign.budget }}</td>
+                            <td><span class="status-badge status-{{ campaign.status }}">{{ campaign.status|title }}</span></td>
+                            <td>{{ campaign.applications_count }}</td>
+                            <td>{{ campaign.deadline|date:"M d, Y" }}</td>
+                            <td>
+                                <a href="{% url 'campaign_edit' campaign.pk %}" class="btn btn-sm btn-outline-primary">Edit</a>
+                                <a href="{% url 'campaign_applications' campaign.pk %}" class="btn btn-sm btn-outline-success">Applications</a>
+                                <a href="{% url 'campaign_delete' campaign.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% include 'pagination.html' %}
+    {% else %}
+        <div class="alert alert-info">
+            You haven't created any campaigns yet. <a href="{% url 'campaign_create' %}">Create your first campaign</a> to get started.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

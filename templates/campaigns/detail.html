@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ campaign.title }} - Wariblo{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <h1>{{ campaign.title }}</h1>
+                        <span class="status-badge status-{{ campaign.status }}">{{ campaign.status|title }}</span>
+                    </div>
+                    <p class="lead text-muted">{{ campaign.niche }} • {{ campaign.platform|title }}</p>
+                    <hr>
+                    <h4>Description</h4>
+                    <p>{{ campaign.description }}</p>
+                    <h4 class="mt-4">Requirements</h4>
+                    <p>{{ campaign.requirements }}</p>
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <p><strong>Budget:</strong> ${{ campaign.budget }}</p>
+                            <p><strong>Deadline:</strong> {{ campaign.deadline|date:"M d, Y" }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Applications:</strong> {{ campaign.applications_count }}</p>
+                            <p><strong>Posted:</strong> {{ campaign.created_at|date:"M d, Y" }}</p>
+                        </div>
+                    </div>
+                    {% if user.is_authenticated and user.is_influencer %}
+                        <div class="mt-4">
+                            {% if has_applied %}
+                                <button class="btn btn-secondary" disabled>You have already applied</button>
+                            {% elif campaign.is_open %}
+                                <a href="{% url 'application_create' campaign.pk %}" class="btn btn-primary btn-lg">Apply to Campaign</a>
+                            {% else %}
+                                <button class="btn btn-secondary" disabled>Campaign is not open</button>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Advertiser</h5>
+                    <p class="card-text">{{ campaign.advertiser.company_name }}</p>
+                    <p class="card-text text-muted">{{ campaign.advertiser.industry }}</p>
+                    {% if campaign.advertiser.logo %}
+                        <img src="{{ campaign.advertiser.logo.url }}" class="img-fluid mb-2" width="100">
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

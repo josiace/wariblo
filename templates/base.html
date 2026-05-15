@@ -1,0 +1,74 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Wariblo - Plateforme de Marketing d'Influence{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a class="navbar-brand" href="{% url 'landing' %}">
+                🔥 Wariblo
+            </a>
+            <button class="hamburger" id="hamburger" aria-label="Menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="navbar-nav" id="navbar-nav">
+                <li><a class="nav-link" href="{% url 'landing' %}">Accueil</a></li>
+                <li><a class="nav-link" href="{% url 'campaign_list' %}">Campagnes</a></li>
+                <li><a class="nav-link" href="{% url 'about' %}">À propos</a></li>
+                <li><a class="nav-link" href="{% url 'contact' %}">Contact</a></li>
+            </ul>
+            <div class="navbar-actions" id="navbar-actions">
+                {% if user.is_authenticated %}
+                    <a class="nav-link" href="{% url 'inbox' %}">📧 Messages</a>
+                    <a class="nav-link" href="{% url 'dashboard' %}">Tableau de bord</a>
+                    <a class="nav-link" href="{% url 'logout' %}">Déconnexion</a>
+                {% else %}
+                    <a class="nav-link" href="{% url 'login' %}">Connexion</a>
+                    <a class="btn btn-primary" href="{% url 'register' %}">S'inscrire</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    {% if messages %}
+        <div class="container mt-3">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+        <div class="footer-container">
+            <div>
+                <div class="footer-title">Wariblo</div>
+                <p class="footer-text">Connecter les influenceurs et les annonceurs à travers l'Afrique.</p>
+            </div>
+            <p class="footer-text">&copy; 2026 Wariblo. Tous droits réservés.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById('hamburger').addEventListener('click', function() {
+            this.classList.toggle('active');
+            document.getElementById('navbar-nav').classList.toggle('active');
+            document.getElementById('navbar-actions').classList.toggle('active');
+        });
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
