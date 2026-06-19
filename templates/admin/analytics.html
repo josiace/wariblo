@@ -1,0 +1,451 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'css/admin.css' %}">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+.analytics-container {
+    padding: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.analytics-header {
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.analytics-header h1 {
+    font-size: 2rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.analytics-header p {
+    color: var(--text-muted);
+    margin-top: 10px;
+}
+
+.charts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 25px;
+    margin-bottom: 30px;
+}
+
+.chart-card {
+    background: var(--bg-white);
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: var(--shadow);
+}
+
+.chart-card h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: var(--text-dark);
+}
+
+.chart-container {
+    position: relative;
+    height: 250px;
+    max-height: 250px;
+    overflow: hidden;
+}
+
+.chart-container canvas {
+    max-height: 250px !important;
+    height: 250px !important;
+    width: 100% !important;
+}
+
+.full-width-chart {
+    grid-column: 1 / -1;
+}
+
+.top-lists {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 25px;
+}
+
+.top-list-card {
+    background: var(--bg-white);
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: var(--shadow);
+}
+
+.top-list-card h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: var(--text-dark);
+}
+
+.top-list-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.top-list-item:last-child {
+    border-bottom: none;
+}
+
+.top-list-item .name {
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+.top-list-item .value {
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+@media (max-width: 768px) {
+    .charts-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .top-lists {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+<script>
+// Configuration globale de Chart.js pour limiter la hauteur
+Chart.defaults.maintainAspectRatio = false;
+Chart.defaults.responsive = true;
+Chart.defaults.plugins.legend.display = true;
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="analytics-container">
+    <div class="analytics-header">
+        <h1>📊 Analyse de Données</h1>
+        <p>Visualisation de l'évolution et comparaison des données de la plateforme</p>
+    </div>
+    
+    <!-- Graphiques -->
+    <div class="charts-grid">
+        <div class="chart-card full-width-chart">
+            <h3>Évolution mensuelle - Campagnes et Candidatures</h3>
+            <div class="chart-container">
+                <canvas id="monthlyTrendChart"></canvas>
+            </div>
+        </div>
+        
+        <div class="chart-card">
+            <h3>Campagnes par statut</h3>
+            <div class="chart-container">
+                <canvas id="campaignsStatusChart"></canvas>
+            </div>
+        </div>
+        
+        <div class="chart-card">
+            <h3>Candidatures par statut</h3>
+            <div class="chart-container">
+                <canvas id="applicationsStatusChart"></canvas>
+            </div>
+        </div>
+        
+        <div class="chart-card">
+            <h3>Utilisateurs par rôle</h3>
+            <div class="chart-container">
+                <canvas id="usersRoleChart"></canvas>
+            </div>
+        </div>
+        
+        <div class="chart-card">
+            <h3>Top 5 Influenceurs par Followers</h3>
+            <div class="chart-container">
+                <canvas id="topInfluencersChart"></canvas>
+            </div>
+        </div>
+        
+        <div class="chart-card">
+            <h3>Top 5 Campagnes par Budget</h3>
+            <div class="chart-container">
+                <canvas id="topCampaignsChart"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Top listes -->
+    <div class="top-lists">
+        <div class="top-list-card">
+            <h3>Top 5 Influenceurs (Followers)</h3>
+            {% for influencer in stats.top_influencers %}
+            <div class="top-list-item">
+                <span class="name">{{ influencer.full_name }}</span>
+                <span class="value">{{ influencer.total_followers|floatformat:0 }}</span>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="top-list-card">
+            <h3>Top 5 Campagnes (Budget)</h3>
+            {% for campaign in stats.campaigns.top_campaigns %}
+            <div class="top-list-item">
+                <span class="name">{{ campaign.title }}</span>
+                <span class="value">${{ campaign.budget|floatformat:0 }}</span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<script>
+// Couleurs du thème
+const colors = {
+    primary: '#FF4500',
+    secondary: '#FFD700',
+    accent: '#FF1493',
+    success: '#28a745',
+    danger: '#dc3545',
+    warning: '#FFD700',
+    info: '#17a2b8',
+    gray: '#6c757d'
+};
+
+// Données
+const campaignsByStatus = {{ stats.campaigns.by_status|safe }};
+const applicationsByStatus = {{ stats.applications.by_status|safe }};
+const usersByRole = {{ stats.users.by_role|safe }};
+const campaignsByMonth = {{ stats.campaigns.by_month|safe }};
+const applicationsByMonth = {{ stats.applications.by_month|safe }};
+const topInfluencers = {{ stats.top_influencers|safe }};
+const topCampaigns = {{ stats.campaigns.top_campaigns|safe }};
+
+// Graphique Évolution mensuelle
+new Chart(document.getElementById('monthlyTrendChart'), {
+    type: 'line',
+    data: {
+        labels: campaignsByMonth.map(item => item.month),
+        datasets: [{
+            label: 'Campagnes',
+            data: campaignsByMonth.map(item => item.count),
+            borderColor: colors.primary,
+            backgroundColor: colors.primary + '20',
+            fill: true,
+            tension: 0.4,
+            borderWidth: 3
+        }, {
+            label: 'Candidatures',
+            data: applicationsByMonth.map(item => item.count),
+            borderColor: colors.accent,
+            backgroundColor: colors.accent + '20',
+            fill: true,
+            tension: 0.4,
+            borderWidth: 3
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'top',
+                labels: {
+                    font: {
+                        size: 14,
+                        weight: 'bold'
+                    }
+                }
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                grid: {
+                    color: colors.gray + '20'
+                }
+            },
+            x: {
+                grid: {
+                    display: false
+                }
+            }
+        }
+    }
+});
+
+// Graphique Campagnes par statut
+new Chart(document.getElementById('campaignsStatusChart'), {
+    type: 'doughnut',
+    data: {
+        labels: campaignsByStatus.map(item => item.status),
+        datasets: [{
+            data: campaignsByStatus.map(item => item.count),
+            backgroundColor: [colors.primary, colors.success, colors.danger, colors.info, colors.gray],
+            borderWidth: 0
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'bottom',
+                labels: {
+                    font: {
+                        size: 12
+                    }
+                }
+            }
+        }
+    }
+});
+
+// Graphique Candidatures par statut
+new Chart(document.getElementById('applicationsStatusChart'), {
+    type: 'pie',
+    data: {
+        labels: applicationsByStatus.map(item => item.status),
+        datasets: [{
+            data: applicationsByStatus.map(item => item.count),
+            backgroundColor: [colors.warning, colors.success, colors.danger, colors.gray],
+            borderWidth: 0
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'bottom',
+                labels: {
+                    font: {
+                        size: 12
+                    }
+                }
+            }
+        }
+    }
+});
+
+// Graphique Utilisateurs par rôle
+new Chart(document.getElementById('usersRoleChart'), {
+    type: 'bar',
+    data: {
+        labels: usersByRole.map(item => item.role),
+        datasets: [{
+            label: 'Utilisateurs',
+            data: usersByRole.map(item => item.count),
+            backgroundColor: [colors.primary, colors.secondary, colors.accent],
+            borderWidth: 0,
+            borderRadius: 8
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                display: false
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                grid: {
+                    color: colors.gray + '20'
+                }
+            },
+            x: {
+                grid: {
+                    display: false
+                }
+            }
+        }
+    }
+});
+
+// Graphique Top 5 Influenceurs
+new Chart(document.getElementById('topInfluencersChart'), {
+    type: 'bar',
+    data: {
+        labels: topInfluencers.map(item => item.full_name),
+        datasets: [{
+            label: 'Followers',
+            data: topInfluencers.map(item => item.total_followers),
+            backgroundColor: colors.primary,
+            borderWidth: 0,
+            borderRadius: 8
+        }]
+    },
+    options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                display: false
+            }
+        },
+        scales: {
+            x: {
+                beginAtZero: true,
+                grid: {
+                    color: colors.gray + '20'
+                }
+            },
+            y: {
+                grid: {
+                    display: false
+                }
+            }
+        }
+    }
+});
+
+// Graphique Top 5 Campagnes
+new Chart(document.getElementById('topCampaignsChart'), {
+    type: 'bar',
+    data: {
+        labels: topCampaigns.map(item => item.title),
+        datasets: [{
+            label: 'Budget ($)',
+            data: topCampaigns.map(item => item.budget),
+            backgroundColor: colors.accent,
+            borderWidth: 0,
+            borderRadius: 8
+        }]
+    },
+    options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                display: false
+            }
+        },
+        scales: {
+            x: {
+                beginAtZero: true,
+                grid: {
+                    color: colors.gray + '20'
+                }
+            },
+            y: {
+                grid: {
+                    display: false
+                }
+            }
+        }
+    }
+});
+</script>
+{% endblock %}

@@ -1,53 +1,87 @@
 {% extends 'base.html' %}
+{% load currency %}
 
-{% block title %}Influencer Dashboard - Wariblo{% endblock %}
+{% block title %}Tableau de bord Influenceur - Wariblo{% endblock %}
 
 {% block content %}
-<div class="container py-5">
-    <div class="row">
-        <div class="col-md-3">
-            <div class="card mb-4">
-                <div class="card-body text-center">
+<div class="dashboard-layout">
+    <button class="sidebar-toggle" id="sidebarToggle">☰</button>
+    
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <a href="{% url 'home' %}" class="sidebar-brand">🔥 Wariblo</a>
+            
+            <div class="sidebar-user">
+                <div class="sidebar-user-avatar">
                     {% if profile.profile_image %}
-                        <img src="{{ profile.profile_image.url }}" class="rounded-circle mb-3" width="100" height="100">
+                        <img src="{{ profile.profile_image.url }}" alt="{{ profile.full_name }}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
                     {% else %}
-                        <div class="rounded-circle bg-secondary d-inline-flex align-items-center justify-content-center mb-3" style="width: 100px; height: 100px;">
-                            <i class="bi bi-person text-white" style="font-size: 3rem;"></i>
-                        </div>
+                        👤
                     {% endif %}
-                    <h5>{{ profile.full_name }}</h5>
-                    <p class="text-muted">{{ profile.niche }}</p>
-                    <p class="mb-0"><strong>{{ profile.total_followers }}</strong> Total Followers</p>
                 </div>
-            </div>
-            <div class="card">
-                <div class="card-body">
-                    <h6 class="card-title">Quick Links</h6>
-                    <div class="d-grid gap-2">
-                        <a href="{% url 'influencer_profile_edit' %}" class="btn btn-outline-primary btn-sm">Edit Profile</a>
-                        <a href="{% url 'influencer_campaigns' %}" class="btn btn-outline-primary btn-sm">Browse Campaigns</a>
-                        <a href="{% url 'influencer_applications' %}" class="btn btn-outline-primary btn-sm">My Applications</a>
-                        <a href="{% url 'inbox' %}" class="btn btn-outline-primary btn-sm">Messages</a>
-                    </div>
-                </div>
+                <div class="sidebar-user-name">{{ profile.full_name }}</div>
+                <div class="sidebar-user-role">Influenceur</div>
             </div>
         </div>
-        <div class="col-md-9">
-            <h2 class="mb-4">Dashboard</h2>
+        
+        <ul class="sidebar-nav">
+            <li class="sidebar-nav-item">
+                <a href="{% url 'influencer_dashboard' %}" class="sidebar-nav-link active">
+                    <span class="sidebar-nav-icon">📊</span>
+                    <span>Tableau de bord</span>
+                </a>
+            </li>
+            <li class="sidebar-nav-item">
+                <a href="{% url 'influencer_campaigns' %}" class="sidebar-nav-link">
+                    <span class="sidebar-nav-icon">🎯</span>
+                    <span>Parcourir les campagnes</span>
+                </a>
+            </li>
+            <li class="sidebar-nav-item">
+                <a href="{% url 'influencer_applications' %}" class="sidebar-nav-link">
+                    <span class="sidebar-nav-icon">📝</span>
+                    <span>Mes candidatures</span>
+                </a>
+            </li>
+            <li class="sidebar-nav-item">
+                <a href="{% url 'influencer_profile_edit' %}" class="sidebar-nav-link">
+                    <span class="sidebar-nav-icon">⚙️</span>
+                    <span>Modifier le profil</span>
+                </a>
+            </li>
+            <li class="sidebar-nav-item">
+                <a href="{% url 'inbox' %}" class="sidebar-nav-link">
+                    <span class="sidebar-nav-icon">💬</span>
+                    <span>Messages</span>
+                </a>
+            </li>
+        </ul>
+        
+        <div class="sidebar-footer">
+            <a href="{% url 'logout' %}" class="sidebar-nav-link">
+                <span class="sidebar-nav-icon">🚪</span>
+                <span>Déconnexion</span>
+            </a>
+        </div>
+    </aside>
+    
+    <main class="dashboard-content">
+        <div class="container">
+            <h2 class="mb-4">Tableau de bord</h2>
             
             <div class="row mb-4">
                 <div class="col-md-4">
                     <div class="card">
                         <div class="card-body">
-                            <h6 class="card-title">Total Applications</h6>
-                            <h3>{{ my_applications|length }}</h3>
+                            <h6 class="card-title">Total des candidatures</h6>
+                            <h3>{{ total_applications|default:my_applications|length }}</h3>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="card">
                         <div class="card-body">
-                            <h6 class="card-title">Accepted</h6>
+                            <h6 class="card-title">Acceptées</h6>
                             <h3>{{ accepted_count }}</h3>
                         </div>
                     </div>
@@ -55,22 +89,42 @@
                 <div class="col-md-4">
                     <div class="card">
                         <div class="card-body">
-                            <h6 class="card-title">Pending</h6>
+                            <h6 class="card-title">En attente</h6>
                             <h3>{{ pending_count }}</h3>
                         </div>
                     </div>
                 </div>
             </div>
             
-            <h4 class="mb-3">Recent Applications</h4>
+            <h4 class="mb-3 mt-4">Statistiques de performance</h4>
+            <div class="row mb-4">
+                <div class="col-md-6 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h6 class="card-title">Statut des candidatures</h6>
+                            <canvas id="applicationsChart" height="150"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h6 class="card-title">Taux de succès</h6>
+                            <canvas id="successRateChart" height="150"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <h4 class="mb-3">Candidatures récentes</h4>
             {% if my_applications %}
                 <div class="table-responsive">
                     <table class="table">
                         <thead>
                             <tr>
-                                <th>Campaign</th>
-                                <th>Status</th>
-                                <th>Applied</th>
+                                <th>Campagne</th>
+                                <th>Statut</th>
+                                <th>Postulé le</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -78,17 +132,17 @@
                                 <tr>
                                     <td><a href="{% url 'campaign_detail' app.campaign.pk %}">{{ app.campaign.title }}</a></td>
                                     <td><span class="status-badge status-{{ app.status }}">{{ app.status|title }}</span></td>
-                                    <td>{{ app.created_at|date:"M d, Y" }}</td>
+                                    <td>{{ app.created_at|date:"d M Y" }}</td>
                                 </tr>
                             {% endfor %}
                         </tbody>
                     </table>
                 </div>
             {% else %}
-                <p class="text-muted">No applications yet. <a href="{% url 'influencer_campaigns' %}">Browse campaigns</a> to get started.</p>
+                <p class="text-muted">Aucune candidature pour le moment. <a href="{% url 'influencer_campaigns' %}">Parcourir les campagnes</a> pour commencer.</p>
             {% endif %}
             
-            <h4 class="mb-3 mt-4">Available Campaigns</h4>
+            <h4 class="mb-3 mt-4">Campagnes disponibles</h4>
             {% if available_campaigns %}
                 <div class="row">
                     {% for campaign in available_campaigns %}
@@ -97,17 +151,79 @@
                                 <div class="card-body">
                                     <h5 class="card-title">{{ campaign.title }}</h5>
                                     <p class="card-text text-muted">{{ campaign.niche }} • {{ campaign.platform|title }}</p>
-                                    <p class="card-text"><strong>${{ campaign.budget }}</strong> budget</p>
-                                    <a href="{% url 'campaign_detail' campaign.pk %}" class="btn btn-primary btn-sm">View Details</a>
+                                    <p class="card-text"><strong>{{ campaign.budget|convert_currency:user }}</strong> budget</p>
+                                    <a href="{% url 'campaign_detail' campaign.pk %}" class="btn btn-primary btn-sm">Voir les détails</a>
                                 </div>
                             </div>
                         </div>
                     {% endfor %}
                 </div>
             {% else %}
-                <p class="text-muted">No campaigns available at the moment.</p>
+                <p class="text-muted">Aucune campagne disponible pour le moment.</p>
             {% endif %}
         </div>
-    </div>
+    </main>
 </div>
+
+<script>
+// Toggle sidebar
+document.getElementById('sidebarToggle').addEventListener('click', function() {
+    document.getElementById('sidebar').classList.toggle('active');
+});
+
+// Graphique des candidatures
+const applicationsCtx = document.getElementById('applicationsChart').getContext('2d');
+new Chart(applicationsCtx, {
+    type: 'doughnut',
+    data: {
+        labels: ['Acceptées', 'En attente', 'Rejetées'],
+        datasets: [{
+            data: [{{ accepted_count }}, {{ pending_count }}, {{ rejected_count }}],
+            backgroundColor: ['#A5D6A7', '#FFE082', '#EF9A9A'],
+            borderWidth: 0
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'bottom'
+            }
+        }
+    }
+});
+
+// Graphique du taux de succès
+const successRateCtx = document.getElementById('successRateChart').getContext('2d');
+new Chart(successRateCtx, {
+    type: 'bar',
+    data: {
+        labels: ['Taux de succès'],
+        datasets: [{
+            label: 'Pourcentage',
+            data: [{{ success_rate }}],
+            backgroundColor: 'rgba(255, 69, 0, 0.8)',
+            borderColor: 'rgba(255, 69, 0, 1)',
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            y: {
+                beginAtZero: true,
+                max: 100
+            }
+        },
+        plugins: {
+            legend: {
+                display: false
+            }
+        }
+    }
+});
+</script>
+
 {% endblock %}

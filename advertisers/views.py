@@ -13,13 +13,26 @@ def advertiser_dashboard(request):
     except AdvertiserProfile.DoesNotExist:
         return redirect('advertiser_profile_create')
     
-    my_campaigns = profile.campaigns.all().order_by('-created_at')[:5]
+    my_campaigns = profile.campaigns.prefetch_related(
+        'applications__influencer__user'
+    ).order_by('-created_at')[:5]
     open_campaigns_count = profile.campaigns.filter(status='open').count()
+    total_campaigns = profile.campaigns.count()
+    total_applications = sum(campaign.applications.count() for campaign in profile.campaigns.all())
+    accepted_applications = sum(
+        campaign.applications.filter(status='accepted').count() 
+        for campaign in profile.campaigns.all()
+    )
+    total_budget = sum(campaign.budget for campaign in profile.campaigns.all())
     
     context = {
         'profile': profile,
         'my_campaigns': my_campaigns,
         'open_campaigns_count': open_campaigns_count,
+        'total_campaigns': total_campaigns,
+        'total_applications': total_applications,
+        'accepted_applications': accepted_applications,
+        'total_budget': total_budget,
     }
     return render(request, 'advertisers/dashboard.html', context)
 
@@ -63,7 +76,9 @@ def advertiser_profile_edit(request):
 def advertiser_campaigns(request):
     try:
         profile = request.user.advertiser_profile
-        campaigns = profile.campaigns.all().order_by('-created_at')
+        campaigns = profile.campaigns.prefetch_related(
+            'applications__influencer__user'
+        ).order_by('-created_at')
     except AdvertiserProfile.DoesNotExist:
         return redirect('advertiser_profile_create')
     

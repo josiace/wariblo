@@ -8,13 +8,17 @@ class MessageForm(forms.ModelForm):
         model = Message
         fields = ['content']
         widgets = {
-            'content': forms.Textarea(attrs={'rows': 3, 'placeholder': 'Type your message...'}),
+            'content': forms.Textarea(attrs={
+                'rows': 3,
+                'placeholder': 'Tapez votre message...',
+                'class': 'form-control'
+            }),
         }
     
     def clean_content(self):
         content = self.cleaned_data.get('content')
         if not content or content.strip() == '':
-            raise ValidationError("Message cannot be empty.")
+            raise ValidationError("Le message ne peut pas être vide.")
         if len(content) > 5000:
-            raise ValidationError("Message cannot exceed 5000 characters.")
+            raise ValidationError("Le message ne peut pas dépasser 5000 caractères.")
         return content.strip()

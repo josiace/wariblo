@@ -35,6 +35,12 @@ class Campaign(models.Model):
         verbose_name = 'Campaign'
         verbose_name_plural = 'Campaigns'
         ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['status', 'created_at']),
+            models.Index(fields=['advertiser', 'status']),
+            models.Index(fields=['niche', 'platform']),
+            models.Index(fields=['deadline']),
+        ]
     
     def __str__(self):
         return self.title

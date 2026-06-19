@@ -13,11 +13,18 @@ def influencer_dashboard(request):
     except InfluencerProfile.DoesNotExist:
         return redirect('influencer_profile_create')
     
-    my_applications = profile.applications.all()[:5]
-    available_campaigns = Campaign.objects.filter(status='open').order_by('-created_at')[:10]
+    my_applications = profile.applications.select_related(
+        'campaign__advertiser__user'
+    ).order_by('-created_at')[:5]
+    available_campaigns = Campaign.objects.filter(
+        status='open'
+    ).select_related('advertiser__user').order_by('-created_at')[:10]
     
     accepted_count = profile.applications.filter(status='accepted').count()
     pending_count = profile.applications.filter(status='pending').count()
+    rejected_count = profile.applications.filter(status='rejected').count()
+    total_applications = profile.applications.count()
+    success_rate = (accepted_count / total_applications * 100) if total_applications > 0 else 0
     
     context = {
         'profile': profile,
@@ -25,6 +32,9 @@ def influencer_dashboard(request):
         'available_campaigns': available_campaigns,
         'accepted_count': accepted_count,
         'pending_count': pending_count,
+        'rejected_count': rejected_count,
+        'total_applications': total_applications,
+        'success_rate': round(success_rate, 1),
     }
     return render(request, 'influencers/dashboard.html', context)
 
@@ -66,7 +76,9 @@ def influencer_profile_edit(request):
 
 @influencer_required
 def influencer_campaigns(request):
-    campaigns = Campaign.objects.filter(status='open').order_by('-created_at')
+    campaigns = Campaign.objects.filter(
+        status='open'
+    ).select_related('advertiser__user').order_by('-created_at')
     
     paginator = Paginator(campaigns, 12)
     page_number = request.GET.get('page')
@@ -83,7 +95,9 @@ def influencer_campaigns(request):
 def influencer_applications(request):
     try:
         profile = request.user.influencer_profile
-        applications = profile.applications.all().order_by('-created_at')
+        applications = profile.applications.select_related(
+            'campaign__advertiser__user'
+        ).order_by('-created_at')
     except InfluencerProfile.DoesNotExist:
         return redirect('influencer_profile_create')
     

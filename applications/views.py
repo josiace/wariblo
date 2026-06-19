@@ -19,7 +19,7 @@ def application_create(request, campaign_pk):
         return redirect('influencer_profile_create')
     
     if Application.objects.filter(campaign=campaign, influencer=profile).exists():
-        messages.warning(request, 'You have already applied to this campaign.')
+        messages.warning(request, 'Vous avez déjà postulé à cette campagne.')
         return redirect('campaign_detail', pk=campaign.pk)
     
     if request.method == 'POST':
@@ -29,7 +29,7 @@ def application_create(request, campaign_pk):
             application.campaign = campaign
             application.influencer = profile
             application.save()
-            messages.success(request, 'Application submitted successfully!')
+            messages.success(request, 'Candidature soumise avec succès!')
             return redirect('influencer_applications')
     else:
         form = ApplicationForm()
@@ -70,7 +70,7 @@ def application_accept(request, pk):
     if application.status == 'pending':
         application.status = 'accepted'
         application.save()
-        messages.success(request, 'Application accepted!')
+        messages.success(request, 'Candidature acceptée!')
     
     return redirect('campaign_applications', campaign_pk=application.campaign.pk)
 
@@ -85,7 +85,7 @@ def application_reject(request, pk):
     if application.status == 'pending':
         application.status = 'rejected'
         application.save()
-        messages.success(request, 'Application rejected.')
+        messages.success(request, 'Candidature rejetée.')
     
     return redirect('campaign_applications', campaign_pk=application.campaign.pk)
 
@@ -100,19 +100,24 @@ def application_withdraw(request, pk):
     if application.status == 'pending':
         application.status = 'withdrawn'
         application.save()
-        messages.success(request, 'Application withdrawn.')
+        messages.success(request, 'Candidature retirée.')
     
     return redirect('influencer_applications')
 
 
 @advertiser_required
 def campaign_applications(request, campaign_pk):
-    campaign = get_object_or_404(Campaign, pk=campaign_pk)
+    campaign = get_object_or_404(
+        Campaign.objects.select_related('advertiser__user'),
+        pk=campaign_pk
+    )
     
     if campaign.advertiser.user != request.user:
         return redirect('dashboard')
     
-    applications = campaign.applications.all().order_by('-created_at')
+    applications = campaign.applications.select_related(
+        'influencer__user'
+    ).order_by('-created_at')
     
     paginator = Paginator(applications, 10)
     page_number = request.GET.get('page')

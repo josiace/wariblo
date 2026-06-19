@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
 from django.db.models import Q
+from django.urls import reverse
 from .forms import MessageForm
 from .models import Conversation, Message
 
@@ -10,22 +11,42 @@ User = get_user_model()
 
 @login_required
 def inbox(request):
-    conversations = request.user.conversations.all()
+    conversations = Conversation.objects.filter(
+        participants=request.user
+    ).prefetch_related(
+        'participants',
+        'messages__sender'
+    ).distinct().order_by('-updated_at')
+    
+    # Annoter chaque conversation avec unread_count
+    for conversation in conversations:
+        conversation.unread_count = conversation.unread_count_for_user(request.user)
+    
+    # Récupérer la conversation active si spécifiée dans l'URL
+    active_conversation_id = request.GET.get('conversation')
+    active_conversation = None
+    if active_conversation_id:
+        try:
+            active_conversation = conversations.get(pk=active_conversation_id)
+        except Conversation.DoesNotExist:
+            pass
     
     context = {
         'conversations': conversations,
+        'active_conversation': active_conversation,
     }
     return render(request, 'messaging/inbox.html', context)
 
 
 @login_required
 def conversation_detail(request, pk):
-    conversation = get_object_or_404(Conversation, pk=pk)
+    conversation = get_object_or_404(
+        Conversation.objects.prefetch_related('participants', 'messages__sender'),
+        pk=pk
+    )
     
     if request.user not in conversation.participants.all():
         return redirect('inbox')
-    
-    messages = conversation.messages.all()
     
     if request.method == 'POST':
         form = MessageForm(request.POST)
@@ -36,16 +57,10 @@ def conversation_detail(request, pk):
             message.save()
             conversation.updated_at = message.created_at
             conversation.save()
-            return redirect('conversation_detail', pk=conversation.pk)
+            return redirect(reverse('inbox') + f'?conversation={conversation.pk}')
     else:
-        form = MessageForm()
-    
-    context = {
-        'conversation': conversation,
-        'messages': messages,
-        'form': form,
-    }
-    return render(request, 'messaging/conversation_detail.html', context)
+        # Rediriger vers inbox avec la conversation active
+        return redirect(reverse('inbox') + f'?conversation={conversation.pk}')
 
 
 @login_required

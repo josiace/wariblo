@@ -3,36 +3,41 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="Wariblo - Plateforme de Marketing d'Influence en Afrique">
+    <meta name="theme-color" content="#FF4500">
     <title>{% block title %}Wariblo - Plateforme de Marketing d'Influence{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" defer></script>
     {% block extra_css %}{% endblock %}
 </head>
 <body>
     <nav class="navbar">
         <div class="navbar-container">
-            <a class="navbar-brand" href="{% url 'landing' %}">
+            <a class="navbar-brand" href="{% url 'home' %}">
                 🔥 Wariblo
             </a>
-            <button class="hamburger" id="hamburger" aria-label="Menu">
+            <button class="hamburger" id="hamburger" aria-label="Menu" aria-expanded="false">
                 <span></span>
                 <span></span>
                 <span></span>
             </button>
-            <ul class="navbar-nav" id="navbar-nav">
-                <li><a class="nav-link" href="{% url 'landing' %}">Accueil</a></li>
-                <li><a class="nav-link" href="{% url 'campaign_list' %}">Campagnes</a></li>
-                <li><a class="nav-link" href="{% url 'about' %}">À propos</a></li>
-                <li><a class="nav-link" href="{% url 'contact' %}">Contact</a></li>
+            <ul class="navbar-nav" id="navbar-nav" role="menu">
+                <li><a class="nav-link" href="{% url 'home' %}" role="menuitem">Accueil</a></li>
+                <li><a class="nav-link" href="{% url 'campaign_list' %}" role="menuitem">Campagnes</a></li>
+                <li><a class="nav-link" href="{% url 'about' %}" role="menuitem">À propos</a></li>
+                <li><a class="nav-link" href="{% url 'contact' %}" role="menuitem">Contact</a></li>
             </ul>
             <div class="navbar-actions" id="navbar-actions">
                 {% if user.is_authenticated %}
-                    <a class="nav-link" href="{% url 'inbox' %}">📧 Messages</a>
-                    <a class="nav-link" href="{% url 'dashboard' %}">Tableau de bord</a>
-                    <a class="nav-link" href="{% url 'logout' %}">Déconnexion</a>
+                    <a class="nav-link" href="{% url 'inbox' %}" role="menuitem">📧 Messages</a>
+                    <a class="nav-link" href="{% url 'dashboard' %}" role="menuitem">Tableau de bord</a>
+                    <a class="nav-link" href="{% url 'logout' %}" role="menuitem">Déconnexion</a>
                 {% else %}
-                    <a class="nav-link" href="{% url 'login' %}">Connexion</a>
-                    <a class="btn btn-primary" href="{% url 'register' %}">S'inscrire</a>
+                    <a class="nav-link" href="{% url 'login' %}" role="menuitem">Connexion</a>
+                    <a class="btn btn-primary" href="{% url 'register' %}" role="menuitem">S'inscrire</a>
                 {% endif %}
             </div>
         </div>
@@ -41,7 +46,7 @@
     {% if messages %}
         <div class="container mt-3">
             {% for message in messages %}
-                <div class="alert alert-{{ message.tags }}">
+                <div class="alert alert-{{ message.tags }}" role="alert">
                     {{ message }}
                 </div>
             {% endfor %}
@@ -63,10 +68,44 @@
     </footer>
 
     <script>
-        document.getElementById('hamburger').addEventListener('click', function() {
-            this.classList.toggle('active');
-            document.getElementById('navbar-nav').classList.toggle('active');
-            document.getElementById('navbar-actions').classList.toggle('active');
+        // Mobile menu toggle
+        const hamburger = document.getElementById('hamburger');
+        const nav = document.getElementById('navbar-nav');
+        const actions = document.getElementById('navbar-actions');
+        
+        hamburger.addEventListener('click', function() {
+            const isActive = this.classList.toggle('active');
+            this.setAttribute('aria-expanded', isActive);
+            
+            nav.classList.toggle('active');
+            actions.classList.toggle('active');
+            
+            // Calculer la hauteur du navbar-nav pour positionner navbar-actions
+            if (nav.classList.contains('active')) {
+                const navHeight = nav.offsetHeight;
+                actions.style.top = `calc(100% + var(--spacing-sm) + ${navHeight}px)`;
+            }
+        });
+        
+        // Close menu when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!hamburger.contains(event.target) && !nav.contains(event.target) && !actions.contains(event.target)) {
+                hamburger.classList.remove('active');
+                hamburger.setAttribute('aria-expanded', 'false');
+                nav.classList.remove('active');
+                actions.classList.remove('active');
+            }
+        });
+        
+        // Close menu when clicking on a link
+        const navLinks = document.querySelectorAll('.nav-link');
+        navLinks.forEach(link => {
+            link.addEventListener('click', function() {
+                hamburger.classList.remove('active');
+                hamburger.setAttribute('aria-expanded', 'false');
+                nav.classList.remove('active');
+                actions.classList.remove('active');
+            });
         });
     </script>
     {% block extra_js %}{% endblock %}

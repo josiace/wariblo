@@ -10,7 +10,11 @@ class Conversation(models.Model):
     class Meta:
         verbose_name = 'Conversation'
         verbose_name_plural = 'Conversations'
-        ordering = ['-updated_at']
+        ordering = ['updated_at']
+        indexes = [
+            models.Index(fields=['updated_at']),
+            models.Index(fields=['created_at']),
+        ]
     
     def __str__(self):
         participant_names = ', '.join([user.email for user in self.participants.all()])
@@ -18,10 +22,9 @@ class Conversation(models.Model):
     
     @property
     def last_message(self):
-        return self.messages.first()
+        return self.messages.last()
     
-    @property
-    def unread_count(self, user):
+    def unread_count_for_user(self, user):
         return self.messages.filter(is_read=False).exclude(sender=user).count()
 
 
@@ -35,7 +38,12 @@ class Message(models.Model):
     class Meta:
         verbose_name = 'Message'
         verbose_name_plural = 'Messages'
-        ordering = ['-created_at']
+        ordering = ['created_at']
+        indexes = [
+            models.Index(fields=['conversation', 'created_at']),
+            models.Index(fields=['sender', 'created_at']),
+            models.Index(fields=['is_read']),
+        ]
     
     def __str__(self):
         return f"{self.sender.email}: {self.content[:50]}..."

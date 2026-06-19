@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load currency %}
 
 {% block title %}{{ campaign.title }} - Wariblo{% endblock %}
 
@@ -15,27 +16,27 @@
                     <p class="lead text-muted">{{ campaign.niche }} • {{ campaign.platform|title }}</p>
                     <hr>
                     <h4>Description</h4>
-                    <p>{{ campaign.description }}</p>
-                    <h4 class="mt-4">Requirements</h4>
-                    <p>{{ campaign.requirements }}</p>
+                    <p class="campaign-description">{{ campaign.description }}</p>
+                    <h4 class="mt-4">Exigences</h4>
+                    <p class="campaign-description">{{ campaign.requirements }}</p>
                     <div class="row mt-4">
                         <div class="col-md-6">
-                            <p><strong>Budget:</strong> ${{ campaign.budget }}</p>
-                            <p><strong>Deadline:</strong> {{ campaign.deadline|date:"M d, Y" }}</p>
+                            <p><strong>Budget:</strong> {{ campaign.budget|convert_currency:user }}</p>
+                            <p><strong>Date limite:</strong> {{ campaign.deadline|date:"d M Y" }}</p>
                         </div>
                         <div class="col-md-6">
-                            <p><strong>Applications:</strong> {{ campaign.applications_count }}</p>
-                            <p><strong>Posted:</strong> {{ campaign.created_at|date:"M d, Y" }}</p>
+                            <p><strong>Candidatures:</strong> {{ campaign.applications_count }}</p>
+                            <p><strong>Publié le:</strong> {{ campaign.created_at|date:"d M Y" }}</p>
                         </div>
                     </div>
                     {% if user.is_authenticated and user.is_influencer %}
                         <div class="mt-4">
                             {% if has_applied %}
-                                <button class="btn btn-secondary" disabled>You have already applied</button>
+                                <button class="btn btn-secondary" disabled>Vous avez déjà postulé</button>
                             {% elif campaign.is_open %}
-                                <a href="{% url 'application_create' campaign.pk %}" class="btn btn-primary btn-lg">Apply to Campaign</a>
+                                <a href="{% url 'application_create' campaign.pk %}" class="btn btn-primary btn-lg">Postuler à la campagne</a>
                             {% else %}
-                                <button class="btn btn-secondary" disabled>Campaign is not open</button>
+                                <button class="btn btn-secondary" disabled>Campagne non ouverte</button>
                             {% endif %}
                         </div>
                     {% endif %}
@@ -45,7 +46,7 @@
         <div class="col-md-4">
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title">Advertiser</h5>
+                    <h5 class="card-title">Annonceur</h5>
                     <p class="card-text">{{ campaign.advertiser.company_name }}</p>
                     <p class="card-text text-muted">{{ campaign.advertiser.industry }}</p>
                     {% if campaign.advertiser.logo %}
@@ -56,4 +57,58 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.campaign-description {
+    max-height: 200px;
+    overflow-y: auto;
+    overflow-x: auto;
+    line-height: 1.6;
+    color: var(--text-muted);
+    padding: var(--spacing-sm);
+    background: var(--bg-light);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+    word-wrap: break-word;
+    word-break: break-word;
+}
+
+.d-flex {
+    display: flex;
+}
+
+.justify-content-between {
+    justify-content: space-between;
+}
+
+.align-items-start {
+    align-items: flex-start;
+}
+
+.lead {
+    font-size: 1.25rem;
+    font-weight: 300;
+}
+
+.text-muted {
+    color: var(--text-muted);
+}
+
+.img-fluid {
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--border-radius);
+    border: 2px solid var(--border-color);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .campaign-description {
+        max-height: 150px;
+        font-size: 0.9rem;
+    }
+}
+</style>
 {% endblock %}

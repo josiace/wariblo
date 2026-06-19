@@ -1,21 +1,22 @@
 {% extends 'base.html' %}
+{% load currency %}
 
-{% block title %}My Applications - Wariblo{% endblock %}
+{% block title %}Mes candidatures - Wariblo{% endblock %}
 
 {% block content %}
 <div class="container py-5">
-    <h2 class="mb-4">My Applications</h2>
+    <h2 class="mb-4">Mes candidatures</h2>
     
     {% if applications %}
         <div class="table-responsive">
             <table class="table">
                 <thead>
                     <tr>
-                        <th>Campaign</th>
+                        <th>Campagne</th>
                         <th>Pitch</th>
-                        <th>Proposed Price</th>
-                        <th>Status</th>
-                        <th>Applied</th>
+                        <th>Prix proposé</th>
+                        <th>Statut</th>
+                        <th>Postulé le</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -24,13 +25,13 @@
                         <tr>
                             <td><a href="{% url 'campaign_detail' application.campaign.pk %}">{{ application.campaign.title }}</a></td>
                             <td>{{ application.pitch|truncatewords:10 }}</td>
-                            <td>${{ application.proposed_price }}</td>
+                            <td>{{ application.proposed_price|convert_currency:user }}</td>
                             <td><span class="status-badge status-{{ application.status }}">{{ application.status|title }}</span></td>
-                            <td>{{ application.created_at|date:"M d, Y" }}</td>
+                            <td>{{ application.created_at|date:"d M Y" }}</td>
                             <td>
-                                <a href="{% url 'application_detail' application.pk %}" class="btn btn-sm btn-outline-primary">View</a>
+                                <a href="{% url 'application_detail' application.pk %}" class="btn btn-sm btn-outline-primary">Voir</a>
                                 {% if application.is_pending %}
-                                    <a href="{% url 'application_withdraw' application.pk %}" class="btn btn-sm btn-outline-danger">Withdraw</a>
+                                    <a href="{% url 'application_withdraw' application.pk %}" class="btn btn-sm btn-outline-danger">Retirer</a>
                                 {% endif %}
                             </td>
                         </tr>
@@ -41,7 +42,7 @@
         {% include 'pagination.html' %}
     {% else %}
         <div class="alert alert-info">
-            You haven't applied to any campaigns yet. <a href="{% url 'influencer_campaigns' %}">Browse campaigns</a> to get started.
+            Vous n'avez pas encore postulé à des campagnes. <a href="{% url 'influencer_campaigns' %}">Parcourir les campagnes</a> pour commencer.
         </div>
     {% endif %}
 </div>

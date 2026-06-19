@@ -1,52 +1,87 @@
 {% extends 'base.html' %}
+{% load currency %}
 
-{% block title %}Advertiser Dashboard - Wariblo{% endblock %}
+{% block title %}Tableau de bord Annonceur - Wariblo{% endblock %}
 
 {% block content %}
-<div class="container py-5">
-    <div class="row">
-        <div class="col-md-3">
-            <div class="card mb-4">
-                <div class="card-body text-center">
+<div class="dashboard-layout">
+    <button class="sidebar-toggle" id="sidebarToggle">☰</button>
+    
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <a href="{% url 'home' %}" class="sidebar-brand">🔥 Wariblo</a>
+            
+            <div class="sidebar-user">
+                <div class="sidebar-user-avatar">
                     {% if profile.logo %}
-                        <img src="{{ profile.logo.url }}" class="mb-3" width="100" height="100">
+                        <img src="{{ profile.logo.url }}" alt="{{ profile.company_name }}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
                     {% else %}
-                        <div class="rounded bg-secondary d-inline-flex align-items-center justify-content-center mb-3" style="width: 100px; height: 100px;">
-                            <i class="bi bi-building text-white" style="font-size: 3rem;"></i>
-                        </div>
+                        🏢
                     {% endif %}
-                    <h5>{{ profile.company_name }}</h5>
-                    <p class="text-muted">{{ profile.industry }}</p>
                 </div>
-            </div>
-            <div class="card">
-                <div class="card-body">
-                    <h6 class="card-title">Quick Links</h6>
-                    <div class="d-grid gap-2">
-                        <a href="{% url 'advertiser_profile_edit' %}" class="btn btn-outline-primary btn-sm">Edit Profile</a>
-                        <a href="{% url 'campaign_create' %}" class="btn btn-outline-primary btn-sm">Create Campaign</a>
-                        <a href="{% url 'advertiser_campaigns' %}" class="btn btn-outline-primary btn-sm">My Campaigns</a>
-                        <a href="{% url 'inbox' %}" class="btn btn-outline-primary btn-sm">Messages</a>
-                    </div>
-                </div>
+                <div class="sidebar-user-name">{{ profile.company_name }}</div>
+                <div class="sidebar-user-role">Annonceur</div>
             </div>
         </div>
-        <div class="col-md-9">
-            <h2 class="mb-4">Dashboard</h2>
+        
+        <ul class="sidebar-nav">
+            <li class="sidebar-nav-item">
+                <a href="{% url 'advertiser_dashboard' %}" class="sidebar-nav-link active">
+                    <span class="sidebar-nav-icon">📊</span>
+                    <span>Tableau de bord</span>
+                </a>
+            </li>
+            <li class="sidebar-nav-item">
+                <a href="{% url 'advertiser_campaigns' %}" class="sidebar-nav-link">
+                    <span class="sidebar-nav-icon">🎯</span>
+                    <span>Mes campagnes</span>
+                </a>
+            </li>
+            <li class="sidebar-nav-item">
+                <a href="{% url 'campaign_create' %}" class="sidebar-nav-link">
+                    <span class="sidebar-nav-icon">➕</span>
+                    <span>Créer une campagne</span>
+                </a>
+            </li>
+            <li class="sidebar-nav-item">
+                <a href="{% url 'advertiser_profile_edit' %}" class="sidebar-nav-link">
+                    <span class="sidebar-nav-icon">⚙️</span>
+                    <span>Modifier le profil</span>
+                </a>
+            </li>
+            <li class="sidebar-nav-item">
+                <a href="{% url 'inbox' %}" class="sidebar-nav-link">
+                    <span class="sidebar-nav-icon">💬</span>
+                    <span>Messages</span>
+                </a>
+            </li>
+        </ul>
+        
+        <div class="sidebar-footer">
+            <a href="{% url 'logout' %}" class="sidebar-nav-link">
+                <span class="sidebar-nav-icon">🚪</span>
+                <span>Déconnexion</span>
+            </a>
+        </div>
+    </aside>
+    
+    <main class="dashboard-content">
+        <div class="container">
+            <h2 class="mb-4">Tableau de bord</h2>
             
             <div class="row mb-4">
                 <div class="col-md-4">
                     <div class="card">
                         <div class="card-body">
-                            <h6 class="card-title">Total Campaigns</h6>
-                            <h3>{{ my_campaigns|length }}</h3>
+                            <h6 class="card-title">Total des campagnes</h6>
+                            <h3>{{ total_campaigns|default:my_campaigns|length }}</h3>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="card">
                         <div class="card-body">
-                            <h6 class="card-title">Open Campaigns</h6>
+                            <h6 class="card-title">Campagnes ouvertes</h6>
                             <h3>{{ open_campaigns_count }}</h3>
                         </div>
                     </div>
@@ -54,24 +89,44 @@
                 <div class="col-md-4">
                     <div class="card">
                         <div class="card-body">
-                            <h6 class="card-title">Total Applications</h6>
-                            <h3>{% for campaign in my_campaigns %}{{ campaign.applications_count }}{% endfor %}</h3>
+                            <h6 class="card-title">Total des candidatures</h6>
+                            <h3>{{ total_applications|default:0 }}</h3>
                         </div>
                     </div>
                 </div>
             </div>
             
-            <h4 class="mb-3">Recent Campaigns</h4>
+            <h4 class="mb-3 mt-4">Statistiques de performance</h4>
+            <div class="row mb-4">
+                <div class="col-md-6 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h6 class="card-title">Statut des campagnes</h6>
+                            <canvas id="campaignsChart" height="150"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h6 class="card-title">Statut des candidatures</h6>
+                            <canvas id="applicationsChart" height="150"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <h4 class="mb-3">Campagnes récentes</h4>
             {% if my_campaigns %}
                 <div class="table-responsive">
                     <table class="table">
                         <thead>
                             <tr>
-                                <th>Title</th>
-                                <th>Status</th>
+                                <th>Titre</th>
+                                <th>Statut</th>
                                 <th>Budget</th>
-                                <th>Applications</th>
-                                <th>Created</th>
+                                <th>Candidatures</th>
+                                <th>Créée le</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -79,18 +134,86 @@
                                 <tr>
                                     <td><a href="{% url 'campaign_detail' campaign.pk %}">{{ campaign.title }}</a></td>
                                     <td><span class="status-badge status-{{ campaign.status }}">{{ campaign.status|title }}</span></td>
-                                    <td>${{ campaign.budget }}</td>
+                                    <td>{{ campaign.budget|convert_currency:user }}</td>
                                     <td>{{ campaign.applications_count }}</td>
-                                    <td>{{ campaign.created_at|date:"M d, Y" }}</td>
+                                    <td>{{ campaign.created_at|date:"d M Y" }}</td>
                                 </tr>
                             {% endfor %}
                         </tbody>
                     </table>
                 </div>
             {% else %}
-                <p class="text-muted">No campaigns yet. <a href="{% url 'campaign_create' %}">Create your first campaign</a> to get started.</p>
+                <p class="text-muted">Aucune campagne pour le moment. <a href="{% url 'campaign_create' %}">Créez votre première campagne</a> pour commencer.</p>
             {% endif %}
         </div>
-    </div>
+    </main>
 </div>
+
+<script>
+// Toggle sidebar
+document.getElementById('sidebarToggle').addEventListener('click', function() {
+    document.getElementById('sidebar').classList.toggle('active');
+});
+
+// Graphique des campagnes
+const campaignsCtx = document.getElementById('campaignsChart').getContext('2d');
+const closedCampaigns = {{ total_campaigns|default:0 }} - {{ open_campaigns_count|default:0 }};
+new Chart(campaignsCtx, {
+    type: 'doughnut',
+    data: {
+        labels: ['Ouvertes', 'Fermées', 'Brouillons'],
+        datasets: [{
+            data: [{{ open_campaigns_count|default:0 }}, closedCampaigns, 0],
+            backgroundColor: ['#A5D6A7', '#EF9A9A', '#B0BEC5'],
+            borderWidth: 0
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'bottom'
+            }
+        }
+    }
+});
+
+// Graphique des candidatures
+const applicationsCtx = document.getElementById('applicationsChart').getContext('2d');
+new Chart(applicationsCtx, {
+    type: 'bar',
+    data: {
+        labels: ['Candidatures'],
+        datasets: [{
+            label: 'Total',
+            data: [{{ total_applications }}],
+            backgroundColor: 'rgba(255, 69, 0, 0.8)',
+            borderColor: 'rgba(255, 69, 0, 1)',
+            borderWidth: 1
+        }, {
+            label: 'Acceptées',
+            data: [{{ accepted_applications }}],
+            backgroundColor: 'rgba(165, 214, 167, 0.8)',
+            borderColor: 'rgba(165, 214, 167, 1)',
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        },
+        plugins: {
+            legend: {
+                position: 'bottom'
+            }
+        }
+    }
+});
+</script>
+
 {% endblock %}

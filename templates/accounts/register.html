@@ -5,16 +5,16 @@
 {% block content %}
 <div class="container py-5">
     <div class="row justify-content-center">
-        <div class="col-md-6">
+        <div class="col-md-6 col-lg-5">
             <div class="card">
                 <div class="card-header">
                     <h2 class="text-center">Créer un compte</h2>
                 </div>
                 <div class="card-body">
-                    <form method="post">
+                    <form method="post" autocomplete="off">
                         {% csrf_token %}
                         {% if form.non_field_errors %}
-                            <div class="alert alert-danger">
+                            <div class="alert alert-danger" role="alert">
                                 {{ form.non_field_errors }}
                             </div>
                         {% endif %}
@@ -22,49 +22,49 @@
                             <label for="{{ form.username.id_for_label }}" class="form-label">Nom d'utilisateur</label>
                             {{ form.username }}
                             {% if form.username.errors %}
-                                <div class="form-error">{{ form.username.errors }}</div>
+                                <div class="form-error" role="alert">{{ form.username.errors }}</div>
                             {% endif %}
                         </div>
                         <div class="form-group">
                             <label for="{{ form.email.id_for_label }}" class="form-label">Email</label>
                             {{ form.email }}
                             {% if form.email.errors %}
-                                <div class="form-error">{{ form.email.errors }}</div>
+                                <div class="form-error" role="alert">{{ form.email.errors }}</div>
                             {% endif %}
                         </div>
                         <div class="form-group">
                             <label for="{{ form.phone_number.id_for_label }}" class="form-label">Numéro de téléphone</label>
                             {{ form.phone_number }}
                             {% if form.phone_number.errors %}
-                                <div class="form-error">{{ form.phone_number.errors }}</div>
+                                <div class="form-error" role="alert">{{ form.phone_number.errors }}</div>
                             {% endif %}
                         </div>
                         <div class="form-group">
                             <label for="{{ form.country.id_for_label }}" class="form-label">Pays</label>
                             {{ form.country }}
                             {% if form.country.errors %}
-                                <div class="form-error">{{ form.country.errors }}</div>
+                                <div class="form-error" role="alert">{{ form.country.errors }}</div>
                             {% endif %}
                         </div>
                         <div class="form-group">
                             <label for="{{ form.role.id_for_label }}" class="form-label">Je suis</label>
                             {{ form.role }}
                             {% if form.role.errors %}
-                                <div class="form-error">{{ form.role.errors }}</div>
+                                <div class="form-error" role="alert">{{ form.role.errors }}</div>
                             {% endif %}
                         </div>
                         <div class="form-group">
                             <label for="{{ form.password1.id_for_label }}" class="form-label">Mot de passe</label>
                             {{ form.password1 }}
                             {% if form.password1.errors %}
-                                <div class="form-error">{{ form.password1.errors }}</div>
+                                <div class="form-error" role="alert">{{ form.password1.errors }}</div>
                             {% endif %}
                         </div>
                         <div class="form-group">
                             <label for="{{ form.password2.id_for_label }}" class="form-label">Confirmer le mot de passe</label>
                             {{ form.password2 }}
                             {% if form.password2.errors %}
-                                <div class="form-error">{{ form.password2.errors }}</div>
+                                <div class="form-error" role="alert">{{ form.password2.errors }}</div>
                             {% endif %}
                         </div>
                         <button type="submit" class="btn btn-primary w-100">S'inscrire</button>

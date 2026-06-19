@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load currency %}
 
 {% block title %}Applications for {{ campaign.title }} - Wariblo{% endblock %}
 
@@ -27,7 +28,7 @@
                         <tr>
                             <td>{{ application.influencer.full_name }}</td>
                             <td>{{ application.pitch|truncatewords:10 }}</td>
-                            <td>${{ application.proposed_price }}</td>
+                            <td>{{ application.proposed_price|convert_currency:user }}</td>
                             <td><span class="status-badge status-{{ application.status }}">{{ application.status|title }}</span></td>
                             <td>{{ application.created_at|date:"M d, Y" }}</td>
                             <td>

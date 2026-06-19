@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
+{% load currency %}
 
-{% block title %}{% if campaign %}Edit Campaign{% else %}Create Campaign{% endif %} - Wariblo{% endblock %}
+{% block title %}{% if campaign %}Modifier la campagne{% else %}Créer une campagne{% endif %} - Wariblo{% endblock %}
 
 {% block content %}
 <div class="container py-5">
@@ -8,11 +9,11 @@
         <div class="col-md-8">
             <div class="card">
                 <div class="card-body p-5">
-                    <h2 class="mb-4">{% if campaign %}Edit Campaign{% else %}Create New Campaign{% endif %}</h2>
+                    <h2 class="mb-4">{% if campaign %}Modifier la campagne{% else %}Créer une nouvelle campagne{% endif %}</h2>
                     <form method="post">
                         {% csrf_token %}
                         <div class="mb-3">
-                            <label for="{{ form.title.id_for_label }}" class="form-label">Campaign Title</label>
+                            <label for="{{ form.title.id_for_label }}" class="form-label">Titre de la campagne</label>
                             {{ form.title }}
                         </div>
                         <div class="mb-3">
@@ -20,12 +21,12 @@
                             {{ form.description }}
                         </div>
                         <div class="mb-3">
-                            <label for="{{ form.requirements.id_for_label }}" class="form-label">Requirements</label>
+                            <label for="{{ form.requirements.id_for_label }}" class="form-label">Exigences</label>
                             {{ form.requirements }}
                         </div>
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label for="{{ form.budget.id_for_label }}" class="form-label">Budget ($)</label>
+                                <label for="{{ form.budget.id_for_label }}" class="form-label">Budget ({{ user|currency_symbol }})</label>
                                 {{ form.budget }}
                             </div>
                             <div class="col-md-6 mb-3">
@@ -35,20 +36,20 @@
                         </div>
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label for="{{ form.platform.id_for_label }}" class="form-label">Platform</label>
+                                <label for="{{ form.platform.id_for_label }}" class="form-label">Plateforme</label>
                                 {{ form.platform }}
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="{{ form.deadline.id_for_label }}" class="form-label">Deadline</label>
+                                <label for="{{ form.deadline.id_for_label }}" class="form-label">Date limite</label>
                                 {{ form.deadline }}
                             </div>
                         </div>
                         <div class="mb-3">
-                            <label for="{{ form.status.id_for_label }}" class="form-label">Status</label>
+                            <label for="{{ form.status.id_for_label }}" class="form-label">Statut</label>
                             {{ form.status }}
                         </div>
-                        <button type="submit" class="btn btn-primary">{% if campaign %}Update Campaign{% else %}Create Campaign{% endif %}</button>
-                        <a href="{% if campaign %}{% url 'campaign_detail' campaign.pk %}{% else %}{% url 'advertiser_campaigns' %}{% endif %}" class="btn btn-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-primary">{% if campaign %}Mettre à jour la campagne{% else %}Créer la campagne{% endif %}</button>
+                        <a href="{% if campaign %}{% url 'campaign_detail' campaign.pk %}{% else %}{% url 'advertiser_campaigns' %}{% endif %}" class="btn btn-secondary">Annuler</a>
                     </form>
                 </div>
             </div>

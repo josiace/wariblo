@@ -4,33 +4,223 @@
 
 {% block content %}
 <div class="container py-5">
-    <div class="row">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-body">
-                    <h2 class="mb-4">Conversation</h2>
-                    
-                    <div class="mb-4" style="max-height: 400px; overflow-y: auto;">
-                        {% for message in messages %}
-                            <div class="mb-3 {% if message.sender == user %}text-end{% else %}text-start{% endif %}">
-                                <div class="d-inline-block {% if message.sender == user %}bg-primary text-white{% else %}bg-light{% endif %} rounded p-3" style="max-width: 70%;">
-                                    <p class="mb-1">{{ message.content }}</p>
-                                    <small class="{% if message.sender == user %}text-white-50{% else %}text-muted{% endif %}">{{ message.created_at|date:"H:i" }}</small>
-                                </div>
-                            </div>
-                        {% endfor %}
-                    </div>
-                    
-                    <form method="post">
-                        {% csrf_token %}
-                        <div class="input-group">
-                            {{ form.content }}
-                            <button type="submit" class="btn btn-primary">Send</button>
-                        </div>
-                    </form>
-                </div>
+    <div class="conversation-container">
+        <div class="conversation-header">
+            <h1 class="conversation-title">💬 Conversation</h1>
+            <div class="conversation-participants">
+                {% for participant in conversation.participants.all %}
+                    {% if participant != user %}
+                        <span class="participant-badge">{{ participant.email }}</span>
+                    {% endif %}
+                {% endfor %}
             </div>
         </div>
+        
+        <div class="messages-container">
+            {% for message in messages %}
+                <div class="message-wrapper {% if message.sender == user %}message-sent{% else %}message-received{% endif %}">
+                    <div class="message-bubble">
+                        <p class="message-content">{{ message.content }}</p>
+                        <span class="message-time">{{ message.created_at|date:"H:i" }}</span>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        
+        <form method="post" class="message-form">
+            {% csrf_token %}
+            <div class="form-group">
+                {{ form.content }}
+            </div>
+            <button type="submit" class="btn btn-primary btn-send">Envoyer</button>
+        </form>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.conversation-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.conversation-header {
+    background: linear-gradient(135deg, #FFF5F0, #FFE8DC);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-xl);
+    margin-bottom: var(--spacing-lg);
+    border: 2px solid rgba(255, 69, 0, 0.1);
+}
+
+.conversation-title {
+    font-size: 2rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: var(--spacing-md);
+}
+
+.conversation-participants {
+    display: flex;
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+}
+
+.participant-badge {
+    display: inline-block;
+    padding: var(--spacing-xs) var(--spacing-md);
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    color: white;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    box-shadow: 0 2px 8px rgba(255, 69, 0, 0.3);
+}
+
+.messages-container {
+    background: var(--bg-white);
+    border: 2px solid var(--border-color);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
+    max-height: 500px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.message-wrapper {
+    display: flex;
+    width: 100%;
+}
+
+.message-sent {
+    justify-content: flex-end;
+}
+
+.message-received {
+    justify-content: flex-start;
+}
+
+.message-bubble {
+    max-width: 70%;
+    padding: var(--spacing-md);
+    border-radius: var(--border-radius-lg);
+    position: relative;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    overflow-x: auto;
+    word-wrap: break-word;
+    word-break: break-word;
+}
+
+.message-sent .message-bubble {
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    color: white;
+    border-bottom-right-radius: var(--border-radius-sm);
+}
+
+.message-received .message-bubble {
+    background: linear-gradient(135deg, #FFF5F0, #FFE8DC);
+    color: var(--text-dark);
+    border: 1px solid rgba(255, 69, 0, 0.1);
+    border-bottom-left-radius: var(--border-radius-sm);
+}
+
+.message-content {
+    margin: 0 0 var(--spacing-xs) 0;
+    line-height: 1.5;
+    word-wrap: break-word;
+    word-break: break-word;
+}
+
+.message-time {
+    font-size: 0.75rem;
+    opacity: 0.8;
+    display: block;
+}
+
+.message-sent .message-time {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.message-received .message-time {
+    color: var(--text-muted);
+}
+
+.message-form {
+    background: var(--bg-white);
+    border: 2px solid var(--border-color);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-lg);
+    display: flex;
+    gap: var(--spacing-md);
+    align-items: flex-end;
+}
+
+.message-form .form-group {
+    flex: 1;
+    margin-bottom: 0;
+}
+
+.message-form textarea {
+    min-height: 50px;
+    max-height: 150px;
+    resize: none;
+}
+
+.btn-send {
+    padding: var(--spacing-md) var(--spacing-xl);
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    color: white;
+    border: none;
+    border-radius: var(--border-radius);
+    font-weight: 600;
+    box-shadow: 0 4px 15px rgba(255, 69, 0, 0.3);
+    transition: all 0.3s ease;
+}
+
+.btn-send:hover {
+    background: linear-gradient(135deg, var(--accent-color), var(--primary-color));
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 69, 0, 0.4);
+}
+
+/* Scrollbar styling */
+.messages-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.messages-container::-webkit-scrollbar-track {
+    background: var(--bg-light);
+    border-radius: var(--border-radius);
+}
+
+.messages-container::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    border-radius: var(--border-radius);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .conversation-title {
+        font-size: 1.5rem;
+    }
+    
+    .message-bubble {
+        max-width: 85%;
+    }
+    
+    .message-form {
+        flex-direction: column;
+    }
+    
+    .btn-send {
+        width: 100%;
+    }
+}
+</style>
 {% endblock %}

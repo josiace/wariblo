@@ -1,27 +1,43 @@
 {% extends 'base.html' %}
+{% load currency %}
 
-{% block title %}Apply to Campaign - Wariblo{% endblock %}
+{% block title %}Postuler à la campagne - Wariblo{% endblock %}
 
 {% block content %}
 <div class="container py-5">
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
-                <div class="card-body p-5">
-                    <h2 class="mb-4">Apply to {{ campaign.title }}</h2>
+                <div class="card-body">
+                    <h2 class="card-title text-center mb-4">Postuler à {{ campaign.title }}</h2>
+                    
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {{ form.non_field_errors }}
+                        </div>
+                    {% endif %}
+                    
                     <form method="post">
                         {% csrf_token %}
-                        <div class="mb-3">
-                            <label for="{{ form.pitch.id_for_label }}" class="form-label">Your Pitch</label>
+                        <div class="form-group">
+                            <label for="{{ form.pitch.id_for_label }}" class="form-label">Votre Pitch</label>
                             {{ form.pitch }}
-                            <small class="form-text text-muted">Tell the advertiser why you're the perfect fit for this campaign.</small>
+                            {% if form.pitch.errors %}
+                                <div class="form-error">{{ form.pitch.errors }}</div>
+                            {% endif %}
+                            <small class="form-text text-muted">Expliquez à l'annonceur pourquoi vous êtes le candidat idéal pour cette campagne.</small>
                         </div>
-                        <div class="mb-3">
-                            <label for="{{ form.proposed_price.id_for_label }}" class="form-label">Proposed Price ($)</label>
+                        <div class="form-group">
+                            <label for="{{ form.proposed_price.id_for_label }}" class="form-label">Prix Proposé ({{ user|currency_symbol }})</label>
                             {{ form.proposed_price }}
+                            {% if form.proposed_price.errors %}
+                                <div class="form-error">{{ form.proposed_price.errors }}</div>
+                            {% endif %}
                         </div>
-                        <button type="submit" class="btn btn-primary">Submit Application</button>
-                        <a href="{% url 'campaign_detail' campaign.pk %}" class="btn btn-secondary">Cancel</a>
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-primary">Soumettre la candidature</button>
+                            <a href="{% url 'campaign_detail' campaign.pk %}" class="btn btn-outline">Annuler</a>
+                        </div>
                     </form>
                 </div>
             </div>

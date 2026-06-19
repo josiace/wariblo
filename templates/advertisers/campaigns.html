@@ -1,12 +1,13 @@
 {% extends 'base.html' %}
+{% load currency %}
 
-{% block title %}My Campaigns - Wariblo{% endblock %}
+{% block title %}Mes campagnes - Wariblo{% endblock %}
 
 {% block content %}
 <div class="container py-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>My Campaigns</h2>
-        <a href="{% url 'campaign_create' %}" class="btn btn-primary">Create Campaign</a>
+        <h2>Mes campagnes</h2>
+        <a href="{% url 'campaign_create' %}" class="btn btn-primary">Créer une campagne</a>
     </div>
     
     {% if campaigns %}
@@ -14,13 +15,13 @@
             <table class="table">
                 <thead>
                     <tr>
-                        <th>Title</th>
+                        <th>Titre</th>
                         <th>Niche</th>
-                        <th>Platform</th>
+                        <th>Plateforme</th>
                         <th>Budget</th>
-                        <th>Status</th>
-                        <th>Applications</th>
-                        <th>Deadline</th>
+                        <th>Statut</th>
+                        <th>Candidatures</th>
+                        <th>Date limite</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -30,14 +31,14 @@
                             <td><a href="{% url 'campaign_detail' campaign.pk %}">{{ campaign.title }}</a></td>
                             <td>{{ campaign.niche }}</td>
                             <td>{{ campaign.platform|title }}</td>
-                            <td>${{ campaign.budget }}</td>
+                            <td>{{ campaign.budget|convert_currency:user }}</td>
                             <td><span class="status-badge status-{{ campaign.status }}">{{ campaign.status|title }}</span></td>
                             <td>{{ campaign.applications_count }}</td>
-                            <td>{{ campaign.deadline|date:"M d, Y" }}</td>
+                            <td>{{ campaign.deadline|date:"d M Y" }}</td>
                             <td>
-                                <a href="{% url 'campaign_edit' campaign.pk %}" class="btn btn-sm btn-outline-primary">Edit</a>
-                                <a href="{% url 'campaign_applications' campaign.pk %}" class="btn btn-sm btn-outline-success">Applications</a>
-                                <a href="{% url 'campaign_delete' campaign.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
+                                <a href="{% url 'campaign_edit' campaign.pk %}" class="btn btn-sm btn-outline-primary">Modifier</a>
+                                <a href="{% url 'campaign_applications' campaign.pk %}" class="btn btn-sm btn-outline-success">Candidatures</a>
+                                <a href="{% url 'campaign_delete' campaign.pk %}" class="btn btn-sm btn-outline-danger">Supprimer</a>
                             </td>
                         </tr>
                     {% endfor %}
@@ -47,7 +48,7 @@
         {% include 'pagination.html' %}
     {% else %}
         <div class="alert alert-info">
-            You haven't created any campaigns yet. <a href="{% url 'campaign_create' %}">Create your first campaign</a> to get started.
+            Vous n'avez pas encore créé de campagnes. <a href="{% url 'campaign_create' %}">Créez votre première campagne</a> pour commencer.
         </div>
     {% endif %}
 </div>

@@ -18,18 +18,21 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from core.views import landing_page
+from core.views import landing_page, home
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', landing_page, name='landing'),
+    path('', home, name='home'),
+    path('landing/', landing_page, name='landing'),
     path('accounts/', include('accounts.urls')),
     path('influencer/', include('influencers.urls')),
     path('advertiser/', include('advertisers.urls')),
     path('campaigns/', include('campaigns.urls')),
     path('applications/', include('applications.urls')),
     path('messages/', include('messaging.urls')),
+    path('reviews/', include('reviews.urls')),
     path('about/', include('core.urls')),
+    path('api/', include('api.urls')),
 ]
 
 if settings.DEBUG:

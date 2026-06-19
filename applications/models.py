@@ -24,6 +24,12 @@ class Application(models.Model):
         verbose_name_plural = 'Applications'
         unique_together = ['campaign', 'influencer']
         ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['status', 'created_at']),
+            models.Index(fields=['campaign', 'status']),
+            models.Index(fields=['influencer', 'status']),
+            models.Index(fields=['campaign', 'influencer']),
+        ]
     
     def __str__(self):
         return f"{self.influencer.full_name} - {self.campaign.title}"

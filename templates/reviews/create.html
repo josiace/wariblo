@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+
+{% block title %}Laisser un avis - Wariblo{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="container-sm">
+        <div class="page-header">
+            <h1 class="page-title">⭐ Laisser un avis</h1>
+            <p class="page-subtitle">Partagez votre expérience avec {{ reviewed_user.email }}</p>
+        </div>
+        
+        <div class="card">
+            <div class="card-body">
+                <div class="campaign-info mb-4">
+                    <h3 class="campaign-info-title">Campagne: {{ application.campaign.title }}</h3>
+                    <p class="campaign-info-text">{{ application.campaign.description|truncatewords:30 }}</p>
+                </div>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label class="form-label">Note</label>
+                        {{ form.rating }}
+                        {% if form.rating.errors %}
+                            <div class="form-error">{{ form.rating.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Commentaire</label>
+                        {{ form.comment }}
+                        {% if form.comment.errors %}
+                            <div class="form-error">{{ form.comment.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary btn-block">Publier l'avis</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.page-header {
+    text-align: center;
+    margin-bottom: var(--spacing-2xl);
+    padding: var(--spacing-xl) 0;
+    background: linear-gradient(135deg, #FFF5F0, #FFE8DC);
+    border-radius: var(--border-radius-lg);
+    border: 2px solid rgba(255, 69, 0, 0.1);
+}
+
+.page-title {
+    font-size: 2rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: var(--spacing-md);
+}
+
+.page-subtitle {
+    font-size: 1.1rem;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.campaign-info {
+    background: linear-gradient(135deg, #FFF5F0, #FFE8DC);
+    padding: var(--spacing-lg);
+    border-radius: var(--border-radius);
+    border: 2px solid rgba(255, 69, 0, 0.1);
+}
+
+.campaign-info-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: var(--spacing-sm);
+}
+
+.campaign-info-text {
+    color: var(--text-muted);
+    margin: 0;
+    line-height: 1.6;
+}
+
+.btn-block {
+    width: 100%;
+}
+</style>
+{% endblock %}
