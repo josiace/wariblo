@@ -62,6 +62,7 @@ INSTALLED_APPS = [
     'axes',
     'rest_framework',
     'rest_framework.authtoken',
+    'storages',
     'accounts',
     'influencers',
     'advertisers',
@@ -178,9 +179,22 @@ STATICFILES_STORAGE = os.getenv(
     else 'whitenoise.storage.CompressedManifestStaticFilesStorage',
 )
 
-# Media files (User uploads)
+# Media files (User uploads) - Supabase Storage
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+# Supabase Storage Configuration (S3-compatible)
+if os.getenv('USE_SUPABASE_STORAGE', 'False') == 'True':
+    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
+    AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
+    AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')
+    AWS_S3_ENDPOINT_URL = os.getenv('AWS_S3_ENDPOINT_URL')
+    AWS_S3_OBJECT_PARAMETERS = {
+        'ACL': 'public-read',
+    }
+    AWS_S3_REGION_NAME = os.getenv('AWS_S3_REGION_NAME', 'us-east-1')
+    AWS_DEFAULT_ACL = None
 
 # Custom User Model
 AUTH_USER_MODEL = 'accounts.User'
@@ -225,11 +239,13 @@ SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 X_FRAME_OPTIONS = 'DENY'
 
-# CSRF Trusted Origins for browser preview
+# CSRF Trusted Origins for browser preview and production
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:4000',
     'http://127.0.0.1:4000',
     'http://127.0.0.1:63305',
+    'https://*.onrender.com',
+    'https://*.supabase.co',
 ]
 
 # HSTS Settings
@@ -278,7 +294,7 @@ CACHES = {
     }
 }
 
-# Logging Configuration
+# Logging Configuration (Render-friendly - no file handler)
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -297,25 +313,17 @@ LOGGING = {
             'class': 'logging.StreamHandler',
             'formatter': 'verbose',
         },
-        'file': {
-            'class': 'logging.FileHandler',
-            'filename': BASE_DIR / 'logs' / 'django.log',
-            'formatter': 'verbose',
-        },
     },
     'root': {
-        'handlers': ['console', 'file'],
+        'handlers': ['console'],
         'level': 'INFO',
     },
     'loggers': {
         'django': {
-            'handlers': ['console', 'file'],
+            'handlers': ['console'],
             'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
             'propagate': False,
         },
     },
 }
-
-# Create logs directory if it doesn't exist
-os.makedirs(BASE_DIR / 'logs', exist_ok=True)
 
