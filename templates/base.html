@@ -1,4 +1,5 @@
 {% load static %}
+{% load core_filters %}
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -159,7 +160,7 @@
                 <div class="footer-contact">
                     <p class="footer-text">📧 {{ settings.contact_email }}</p>
                     <p class="footer-text">📱 {{ settings.contact_whatsapp }}</p>
-                    <a href="https://wa.me/{{ settings.contact_whatsapp|replace:'+'|replace:' ' }}" target="_blank" class="btn-whatsapp">
+                    <a href="https://wa.me/{{ settings.contact_whatsapp|replace:'+|' }}" target="_blank" class="btn-whatsapp">
                         💬 Contactez-nous sur WhatsApp
                     </a>
                 </div>
