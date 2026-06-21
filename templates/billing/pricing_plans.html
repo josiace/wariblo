@@ -68,6 +68,14 @@
             <div class="card-body">
                 <h4 class="card-title mb-3">Besoin d'aide pour le paiement ?</h4>
                 <p class="card-text">Contactez-nous directement pour une assistance personnalisée</p>
+                <div class="payment-methods-info mb-3">
+                    <p class="text-muted small">
+                        <strong>📱 Numéro disponible pour:</strong><br>
+                        ✅ Wave Money<br>
+                        ✅ Moov Money<br>
+                        ❌ Orange Money (non disponible)
+                    </p>
+                </div>
                 <div class="d-flex justify-content-center gap-3 flex-wrap">
                     <a href="https://wa.me/22369549391" target="_blank" class="btn-whatsapp-payment">
                         💬 Contactez-nous sur WhatsApp
@@ -144,6 +152,18 @@
 .btn-email-payment:hover {
     background: var(--accent-color);
     transform: scale(1.05);
+}
+
+.payment-methods-info {
+    padding: 1rem;
+    background: rgba(255, 69, 0, 0.1);
+    border-radius: var(--border-radius);
+    border-left: 4px solid var(--primary-color);
+}
+
+.payment-methods-info p {
+    margin: 0;
+    line-height: 1.8;
 }
 
 .pricing-features {
