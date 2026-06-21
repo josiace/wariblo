@@ -244,8 +244,7 @@ CSRF_TRUSTED_ORIGINS = [
     'http://localhost:4000',
     'http://127.0.0.1:4000',
     'http://127.0.0.1:63305',
-    'https://*.onrender.com',
-    'https://*.supabase.co',
+    'https://wariblo.onrender.com',  # ← ajoute cette ligne
 ]
 
 # HSTS Settings
