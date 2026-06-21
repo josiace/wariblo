@@ -72,6 +72,27 @@
         color: var(--primary-color);
     }
     
+    .footer-contact {
+        margin-top: var(--spacing-md);
+    }
+    
+    .btn-whatsapp {
+        display: inline-block;
+        margin-top: var(--spacing-sm);
+        padding: var(--spacing-sm) var(--spacing-md);
+        background: #25D366;
+        color: white;
+        text-decoration: none;
+        border-radius: var(--border-radius);
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-whatsapp:hover {
+        background: #128C7E;
+        transform: scale(1.05);
+    }
+    
     /* Responsive */
     @media (max-width: 768px) {
         .global-search {
@@ -135,6 +156,13 @@
             <div>
                 <div class="footer-title">Wariblo</div>
                 <p class="footer-text">Connecter les influenceurs et les annonceurs à travers l'Afrique.</p>
+                <div class="footer-contact">
+                    <p class="footer-text">📧 {{ settings.contact_email }}</p>
+                    <p class="footer-text">📱 {{ settings.contact_whatsapp }}</p>
+                    <a href="https://wa.me/{{ settings.contact_whatsapp|replace:'+'|replace:' ' }}" target="_blank" class="btn-whatsapp">
+                        💬 Contactez-nous sur WhatsApp
+                    </a>
+                </div>
             </div>
             <div class="footer-links">
                 <a href="{% url 'about' %}">À propos</a>
