@@ -1,0 +1,288 @@
+{% extends 'base.html' %}
+{% load currency %}
+
+{% block title %}Influenceurs - Wariblo{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="page-header mb-5">
+        <h1 class="page-title">🌟 Influenceurs</h1>
+        <p class="page-subtitle">Trouvez les influenceurs parfaits pour vos campagnes</p>
+    </div>
+
+    <!-- Filtres -->
+    <div class="filters-section mb-4">
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <select name="niche" class="form-control" onchange="window.location.href='?niche='+this.value">
+                    <option value="">Toutes les niches</option>
+                    {% for value, label in niche_choices %}
+                        <option value="{{ value }}" {% if current_niche == value %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-4 mb-3">
+                <input type="text" name="location" class="form-control" placeholder="Localisation" value="{{ current_location }}">
+            </div>
+            <div class="col-md-4 mb-3">
+                <button type="submit" class="btn btn-primary w-100">Filtrer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Liste des influenceurs -->
+    {% if influencers %}
+        <div class="influencers-grid">
+            {% for influencer in influencers %}
+                <div class="influencer-card-premium">
+                    <div class="influencer-avatar">
+                        {% if influencer.profile_image %}
+                            <img src="{{ influencer.profile_image.url }}" alt="{{ influencer.full_name }}">
+                        {% else %}
+                            <div class="avatar-placeholder">{{ influencer.full_name|slice:":1" }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="influencer-info">
+                        <div class="influencer-name">{{ influencer.full_name }}</div>
+                        <div class="influencer-niche">{{ influencer.get_niche_display }}</div>
+                        <div class="influencer-location">📍 {{ influencer.location }}</div>
+                        <div class="influencer-stats">
+                            <span class="stat-badge">👥 {{ influencer.total_followers|default:0 }} followers</span>
+                        </div>
+                        {% if influencer.rate_per_post %}
+                            <div class="influencer-rate">{{ influencer.rate_per_post|convert_currency:user }}/post</div>
+                        {% endif %}
+                    </div>
+                    <div class="influencer-actions">
+                        <a href="{% url 'influencer_detail' influencer.pk %}" class="btn btn-sm btn-outline">Voir profil</a>
+                        {% if request.user.is_authenticated %}
+                            <a href="{% url 'conversation_create' influencer.user.id %}" class="btn btn-sm btn-primary">💬 Contacter</a>
+                        {% else %}
+                            <a href="{% url 'login' %}" class="btn btn-sm btn-primary">💬 Contacter</a>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        {% if page_obj.has_other_pages %}
+            <div class="pagination-wrapper">
+                <div class="pagination">
+                    {% if page_obj.has_previous %}
+                        <a href="?page={{ page_obj.previous_page_number }}{% if current_niche %}&niche={{ current_niche }}{% endif %}{% if current_location %}&location={{ current_location }}{% endif %}" class="pagination-link">← Précédent</a>
+                    {% endif %}
+                    
+                    <span class="pagination-info">Page {{ page_obj.number }} sur {{ page_obj.paginator.num_pages }}</span>
+                    
+                    {% if page_obj.has_next %}
+                        <a href="?page={{ page_obj.next_page_number }}{% if current_niche %}&niche={{ current_niche }}{% endif %}{% if current_location %}&location={{ current_location }}{% endif %}" class="pagination-link">Suivant →</a>
+                    {% endif %}
+                </div>
+            </div>
+        {% endif %}
+    {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">👥</div>
+            <p>Aucun influenceur trouvé</p>
+            <a href="{% url 'influencer_list' %}" class="btn btn-primary">Réinitialiser les filtres</a>
+        </div>
+    {% endif %}
+</div>
+
+<style>
+.page-header {
+    text-align: center;
+}
+
+.page-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.page-subtitle {
+    font-size: 1.1rem;
+    color: var(--text-muted);
+}
+
+.filters-section {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+.influencers-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.influencer-card-premium {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.influencer-card-premium:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+    border-color: var(--primary-color);
+}
+
+.influencer-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin: 0 auto;
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.influencer-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.avatar-placeholder {
+    font-size: 2rem;
+    font-weight: 700;
+    color: white;
+}
+
+.influencer-info {
+    text-align: center;
+}
+
+.influencer-name {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 0.5rem;
+}
+
+.influencer-niche {
+    font-size: 0.9rem;
+    color: var(--primary-color);
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.influencer-location {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+}
+
+.influencer-stats {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.stat-badge {
+    background: rgba(255, 69, 0, 0.1);
+    color: var(--primary-color);
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.influencer-rate {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+.influencer-actions {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+}
+
+.pagination-wrapper {
+    margin-top: 2rem;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+.pagination-link {
+    padding: 0.5rem 1rem;
+    background: var(--primary-color);
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.pagination-link:hover {
+    background: var(--accent-color);
+    transform: translateY(-2px);
+}
+
+.pagination-info {
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 3rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+.empty-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+}
+
+.empty-state p {
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+}
+
+@media (max-width: 768px) {
+    .page-title {
+        font-size: 1.8rem;
+    }
+    
+    .influencers-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .pagination {
+        flex-direction: column;
+    }
+}
+</style>
+{% endblock %}

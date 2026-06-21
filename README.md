@@ -13,7 +13,12 @@ Wariblo is a two-sided marketplace platform connecting influencers and advertise
 - **Messaging System**: Direct communication between users
 - **Admin Panel**: Full Django admin integration
 
-### Advanced Features (v2.0)
+### Advanced Features (v3.0)
+- **REST API**: Full REST API with Django REST Framework
+- **Security**: Rate limiting with django-axes, HSTS, SSL configuration
+- **Monitoring**: Error tracking with Sentry
+- **Performance**: Database indexes, WhiteNoise for static files
+- **Async Tasks**: Celery for background tasks (emails, notifications)
 - **Advanced Search**: Search by keywords, niche, platform, budget with sorting options
 - **Analytics Dashboard**: Campaign analytics with views, clicks, conversion rates, ROI
 - **Statistics Charts**: Interactive charts (Chart.js) for campaign and application statistics
@@ -29,11 +34,16 @@ Wariblo is a two-sided marketplace platform connecting influencers and advertise
 
 ## Tech Stack
 
-- **Backend**: Django 4.2.6 (Pure Django, no DRF, no REST API)
+- **Backend**: Django 4.2.6
+- **API**: Django REST Framework 3.14.0
 - **Frontend**: Django Templates + Custom CSS (No Bootstrap)
 - **Charts**: Chart.js 4.4.0
 - **Database**: SQLite (PostgreSQL-ready)
-- **Authentication**: Django session-based auth
+- **Authentication**: Django session-based auth + Token auth for API
+- **Security**: django-axes (rate limiting), HSTS, SSL
+- **Monitoring**: Sentry (error tracking)
+- **Async Tasks**: Celery + Redis
+- **Static Files**: WhiteNoise (compression)
 
 ## Project Structure
 
@@ -45,9 +55,10 @@ wariblo/
 ├── campaigns/         # Campaign management
 ├── applications/     # Application workflow
 ├── messaging/         # Internal messaging system
-├── core/              # Landing page, currency, countries
+├── core/              # Landing page, currency, countries, async tasks
 ├── reviews/           # Review and rating system
 ├── analytics/         # Campaign analytics and user activity tracking
+├── api/               # REST API endpoints
 ├── static/            # Static files (CSS custom)
 │   └── css/
 │       └── main.css   # Custom CSS with flame color theme

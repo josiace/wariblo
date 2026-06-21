@@ -7,4 +7,6 @@ urlpatterns = [
     path('profile/edit/', views.influencer_profile_edit, name='influencer_profile_edit'),
     path('campaigns/', views.influencer_campaigns, name='influencer_campaigns'),
     path('applications/', views.influencer_applications, name='influencer_applications'),
+    path('list/', views.influencer_list, name='influencer_list'),
+    path('<int:pk>/', views.influencer_detail, name='influencer_detail'),
 ]

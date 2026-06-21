@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+
+{% block title %}Plans d'abonnement - Wariblo{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h1 class="mb-3">Plans d'abonnement</h1>
+        <p class="text-muted">Choisissez le plan qui correspond à vos besoins</p>
+    </div>
+    
+    <div class="row">
+        {% for plan in plans %}
+        <div class="col-md-4 mb-4">
+            <div class="card pricing-card h-100 {% if plan.plan_type == 'pro' %}pricing-card-featured{% endif %}">
+                <div class="card-body">
+                    <h3 class="card-title text-center mb-3">{{ plan.name }}</h3>
+                    <div class="text-center mb-4">
+                        <span class="pricing-price">{{ plan.price }}</span>
+                        <span class="pricing-currency">{{ plan.currency.symbol|default:default_currency_symbol }}</span>
+                        <span class="pricing-period">/mois</span>
+                    </div>
+                    
+                    <ul class="pricing-features">
+                        <li>✓ {{ plan.max_campaigns }} campagnes/mois</li>
+                        <li>✓ {{ plan.max_applications }} candidatures/mois</li>
+                        <li>✓ {{ plan.max_messages }} messages/mois</li>
+                        {% if plan.can_access_analytics %}
+                        <li>✓ Analytics avancés</li>
+                        {% endif %}
+                        {% if plan.can_access_advanced_search %}
+                        <li>✓ Recherche avancée</li>
+                        {% endif %}
+                        {% if plan.can_create_unlimited_campaigns %}
+                        <li>✓ Campagnes illimitées</li>
+                        {% endif %}
+                        {% if plan.priority_support %}
+                        <li>✓ Support prioritaire</li>
+                        {% endif %}
+                        {% if plan.verified_badge %}
+                        <li>✓ Badge vérifié</li>
+                        {% endif %}
+                        <li>✓ Commission: {{ plan.commission_rate }}%</li>
+                    </ul>
+                    
+                    <div class="text-center mt-4">
+                        {% if current_subscription and current_subscription.plan.id == plan.id %}
+                        <button class="btn btn-outline" disabled>Plan actuel</button>
+                        {% else %}
+                        <a href="{% url 'billing:subscribe' plan.id %}" class="btn btn-primary">S'abonner</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    {% if current_subscription %}
+    <div class="text-center mt-4">
+        <p>Vous êtes actuellement abonné au plan <strong>{{ current_subscription.plan.name }}</strong>.</p>
+        <a href="{% url 'billing:my_subscription' %}" class="btn btn-outline">Gérer mon abonnement</a>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+.pricing-card {
+    border: 2px solid var(--border-color);
+    border-radius: var(--border-radius-lg);
+    transition: all 0.3s ease;
+}
+
+.pricing-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow);
+}
+
+.pricing-card-featured {
+    border-color: var(--primary-color);
+    background: linear-gradient(135deg, #FFF5F0, #FFE8DC);
+}
+
+.pricing-price {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.pricing-currency {
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.pricing-period {
+    font-size: 1rem;
+    color: var(--text-muted);
+}
+
+.pricing-features {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 2rem;
+}
+
+.pricing-features li {
+    padding: 0.5rem 0;
+    color: var(--text-dark);
+}
+</style>
+{% endblock %}

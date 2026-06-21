@@ -1,0 +1,260 @@
+{% extends 'base.html' %}
+
+{% block title %}Mon abonnement - Wariblo{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="mb-4">Mon abonnement</h1>
+    
+    {% if pending_payments %}
+    <div class="alert alert-warning mb-4">
+        <h5>⏳ Paiements en attente</h5>
+        <p>Vous avez {{ pending_payments|length }} paiement(s) en attente de validation.</p>
+        <ul class="mb-0">
+            {% for payment in pending_payments %}
+            <li>{{ payment.subscription_plan.name }} - {{ payment.amount }} {{ payment.currency.symbol|default:default_currency_symbol }} ({{ payment.get_status_display }})</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+    
+    {% if subscription %}
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3>{{ subscription.plan.name }}</h3>
+                    <span class="badge badge-success">Actif</span>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="detail-item">
+                                <span class="detail-label">Date de début:</span>
+                                <span class="detail-value">{{ subscription.start_date|date:"d/m/Y" }}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Date de fin:</span>
+                                <span class="detail-value">{{ subscription.end_date|date:"d/m/Y" }}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Jours restants:</span>
+                                <span class="detail-value">{{ subscription.days_remaining }} jours</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="detail-item">
+                                <span class="detail-label">Prix:</span>
+                                <span class="detail-value">{{ subscription.plan.price }} {{ subscription.plan.currency.symbol|default:default_currency_symbol }}/mois</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Renouvellement:</span>
+                                <span class="detail-value">{% if subscription.auto_renew %}Automatique{% else %}Désactivé{% endif %}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <h5>Fonctionnalités incluses:</h5>
+                        <ul class="pricing-features">
+                            <li>✓ {{ subscription.plan.max_campaigns }} campagnes/mois</li>
+                            <li>✓ {{ subscription.plan.max_applications }} candidatures/mois</li>
+                            <li>✓ {{ subscription.plan.max_messages }} messages/mois</li>
+                            {% if subscription.plan.can_access_analytics %}
+                            <li>✓ Analytics avancés</li>
+                            {% endif %}
+                            {% if subscription.plan.can_access_advanced_search %}
+                            <li>✓ Recherche avancée</li>
+                            {% endif %}
+                            {% if subscription.plan.can_create_unlimited_campaigns %}
+                            <li>✓ Campagnes illimitées</li>
+                            {% endif %}
+                            {% if subscription.plan.priority_support %}
+                            <li>✓ Support prioritaire</li>
+                            {% endif %}
+                            {% if subscription.plan.verified_badge %}
+                            <li>✓ Badge vérifié</li>
+                            {% endif %}
+                            <li>✓ Commission: {{ subscription.plan.commission_rate }}%</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="form-actions mt-4">
+                        <a href="{% url 'billing:cancel_subscription' subscription.id %}" class="btn btn-outline">Annuler l'abonnement</a>
+                        <a href="{% url 'billing:pricing_plans' %}" class="btn btn-primary">Changer de plan</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Dernières transactions</h5>
+                </div>
+                <div class="card-body">
+                    {% if transactions %}
+                    <ul class="transaction-list">
+                        {% for transaction in transactions %}
+                        <li class="transaction-item">
+                            <div class="transaction-type">{{ transaction.get_transaction_type_display }}</div>
+                            <div class="transaction-amount">{{ transaction.amount }} {{ transaction.currency.symbol|default:default_currency_symbol }}</div>
+                            <div class="transaction-date">{{ transaction.created_at|date:"d/m/Y" }}</div>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    <a href="{% url 'billing:transactions_history' %}" class="btn btn-sm btn-outline mt-3">Voir tout</a>
+                    {% else %}
+                    <p class="text-muted">Aucune transaction</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="card">
+        <div class="card-body text-center">
+            <h3>Vous n'avez pas d'abonnement actif</h3>
+            <p class="text-muted mb-4">Souscrivez à un plan pour accéder à toutes les fonctionnalités</p>
+            <a href="{% url 'billing:pricing_plans' %}" class="btn btn-primary">Voir les plans</a>
+        </div>
+    </div>
+    {% endif %}
+    
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Historique des paiements</h5>
+                </div>
+                <div class="card-body">
+                    {% if page_obj %}
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Plan</th>
+                                    <th>Méthode</th>
+                                    <th>Montant</th>
+                                    <th>Statut</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for payment in page_obj %}
+                                <tr>
+                                    <td>{{ payment.subscription_plan.name }}</td>
+                                    <td>{{ payment.payment_method.name }}</td>
+                                    <td>{{ payment.amount }} {{ payment.currency.symbol|default:default_currency_symbol }}</td>
+                                    <td>
+                                        {% if payment.status == 'pending' %}
+                                        <span class="badge badge-warning">En attente</span>
+                                        {% elif payment.status == 'confirmed' %}
+                                        <span class="badge badge-success">Confirmé</span>
+                                        {% elif payment.status == 'rejected' %}
+                                        <span class="badge badge-danger">Rejeté</span>
+                                        {% else %}
+                                        <span class="badge badge-secondary">{{ payment.get_status_display }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ payment.created_at|date:"d/m/Y" }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% if page_obj.has_other_pages %}
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination">
+                            {% if page_obj.has_previous %}
+                            <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Précédent</a></li>
+                            {% endif %}
+                            {% for num in page_obj.paginator.page_range %}
+                            {% if page_obj.number == num %}
+                            <li class="page-item active"><a class="page-link" href="#">{{ num }}</a></li>
+                            {% else %}
+                            <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                            {% endif %}
+                            {% endfor %}
+                            {% if page_obj.has_next %}
+                            <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Suivant</a></li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                    {% endif %}
+                    {% else %}
+                    <p class="text-muted">Aucun paiement</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.detail-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.detail-item:last-child {
+    border-bottom: none;
+}
+
+.detail-label {
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+.detail-value {
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+.pricing-features {
+    list-style: none;
+    padding: 0;
+}
+
+.pricing-features li {
+    padding: 0.3rem 0;
+    color: var(--text-dark);
+}
+
+.transaction-list {
+    list-style: none;
+    padding: 0;
+}
+
+.transaction-item {
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.transaction-item:last-child {
+    border-bottom: none;
+}
+
+.transaction-type {
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+.transaction-amount {
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.transaction-date {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.form-actions {
+    display: flex;
+    gap: var(--spacing-md);
+}
+</style>
+{% endblock %}

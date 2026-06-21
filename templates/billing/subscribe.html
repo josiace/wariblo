@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block title %}S'abonner - {{ plan.name }} - Wariblo{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="text-center">Confirmer votre abonnement</h2>
+                </div>
+                <div class="card-body">
+                    <div class="plan-summary mb-4">
+                        <h3>{{ plan.name }}</h3>
+                        <p class="pricing-price">{{ plan.price }} {{ plan.currency.symbol|default:default_currency_symbol }}/mois</p>
+                    </div>
+                    
+                    <ul class="pricing-features mb-4">
+                        <li>✓ {{ plan.max_campaigns }} campagnes/mois</li>
+                        <li>✓ {{ plan.max_applications }} candidatures/mois</li>
+                        <li>✓ {{ plan.max_messages }} messages/mois</li>
+                        {% if plan.can_access_analytics %}
+                        <li>✓ Analytics avancés</li>
+                        {% endif %}
+                        {% if plan.can_access_advanced_search %}
+                        <li>✓ Recherche avancée</li>
+                        {% endif %}
+                        {% if plan.can_create_unlimited_campaigns %}
+                        <li>✓ Campagnes illimitées</li>
+                        {% endif %}
+                        {% if plan.priority_support %}
+                        <li>✓ Support prioritaire</li>
+                        {% endif %}
+                        {% if plan.verified_badge %}
+                        <li>✓ Badge vérifié</li>
+                        {% endif %}
+                        <li>✓ Commission: {{ plan.commission_rate }}%</li>
+                    </ul>
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="form-actions">
+                            <a href="{% url 'pricing_plans' %}" class="btn btn-outline">Annuler</a>
+                            <button type="submit" class="btn btn-primary">Confirmer l'abonnement</button>
+                        </div>
+                    </form>
+                    
+                    <p class="text-muted text-center mt-3">
+                        <small>Vous serez débité {{ plan.price }} {{ plan.currency.symbol|default:default_currency_symbol }} mensuellement.</small>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.plan-summary {
+    text-align: center;
+    padding: 1.5rem;
+    background: var(--bg-light);
+    border-radius: var(--border-radius);
+}
+
+.pricing-price {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.pricing-features {
+    list-style: none;
+    padding: 0;
+}
+
+.pricing-features li {
+    padding: 0.5rem 0;
+    color: var(--text-dark);
+}
+
+.form-actions {
+    display: flex;
+    gap: var(--spacing-md);
+}
+</style>
+{% endblock %}

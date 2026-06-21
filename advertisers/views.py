@@ -4,6 +4,7 @@ from core.decorators import advertiser_required
 from .forms import AdvertiserProfileForm
 from .models import AdvertiserProfile
 from campaigns.models import Campaign
+from influencers.models import InfluencerProfile
 
 
 @advertiser_required
@@ -13,6 +14,12 @@ def advertiser_dashboard(request):
     except AdvertiserProfile.DoesNotExist:
         return redirect('advertiser_profile_create')
     
+    # Influenceurs disponibles (mis en avant)
+    available_influencers = InfluencerProfile.objects.filter(
+        user__is_active=True
+    ).select_related('user').order_by('-instagram_followers')[:12]
+    
+    # Statistiques de campagnes (en secondaire)
     my_campaigns = profile.campaigns.prefetch_related(
         'applications__influencer__user'
     ).order_by('-created_at')[:5]
@@ -27,6 +34,7 @@ def advertiser_dashboard(request):
     
     context = {
         'profile': profile,
+        'available_influencers': available_influencers,
         'my_campaigns': my_campaigns,
         'open_campaigns_count': open_campaigns_count,
         'total_campaigns': total_campaigns,

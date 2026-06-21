@@ -1,0 +1,360 @@
+import django.db.models.deletion
+from django.conf import settings
+from django.db import migrations, models
+
+
+class Migration(migrations.Migration):
+    initial = True
+
+    dependencies = [
+        ("applications", "0002_application_application_status_413525_idx_and_more"),
+        ("campaigns", "0002_campaign_campaigns_c_status_6076a2_idx_and_more"),
+        ("core", "0003_subscription_transaction_subscriptionplan_and_more"),
+        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+    ]
+
+    operations = [
+        migrations.SeparateDatabaseAndState(
+            state_operations=[
+                migrations.CreateModel(
+                    name="SubscriptionPlan",
+                    fields=[
+                        (
+                            "id",
+                            models.BigAutoField(
+                                auto_created=True,
+                                primary_key=True,
+                                serialize=False,
+                                verbose_name="ID",
+                            ),
+                        ),
+                        (
+                            "name",
+                            models.CharField(
+                                max_length=100, verbose_name="Nom du plan"
+                            ),
+                        ),
+                        (
+                            "plan_type",
+                            models.CharField(
+                                choices=[
+                                    ("free", "Gratuit"),
+                                    ("pro", "Pro"),
+                                    ("enterprise", "Enterprise"),
+                                ],
+                                max_length=20,
+                                verbose_name="Type de plan",
+                            ),
+                        ),
+                        (
+                            "user_type",
+                            models.CharField(
+                                choices=[
+                                    ("influencer", "Influenceur"),
+                                    ("advertiser", "Annonceur"),
+                                ],
+                                max_length=20,
+                                verbose_name="Type d'utilisateur",
+                            ),
+                        ),
+                        (
+                            "price",
+                            models.DecimalField(
+                                decimal_places=2,
+                                max_digits=10,
+                                verbose_name="Prix mensuel",
+                            ),
+                        ),
+                        (
+                            "currency",
+                            models.ForeignKey(
+                                null=True,
+                                on_delete=django.db.models.deletion.SET_NULL,
+                                to="core.currency",
+                                verbose_name="Devise",
+                            ),
+                        ),
+                        (
+                            "max_campaigns",
+                            models.IntegerField(
+                                default=3, verbose_name="Max campagnes/mois"
+                            ),
+                        ),
+                        (
+                            "max_applications",
+                            models.IntegerField(
+                                default=10, verbose_name="Max candidatures/mois"
+                            ),
+                        ),
+                        (
+                            "max_messages",
+                            models.IntegerField(
+                                default=50, verbose_name="Max messages/mois"
+                            ),
+                        ),
+                        (
+                            "can_access_analytics",
+                            models.BooleanField(
+                                default=False, verbose_name="Accès analytics"
+                            ),
+                        ),
+                        (
+                            "can_access_advanced_search",
+                            models.BooleanField(
+                                default=False, verbose_name="Recherche avancée"
+                            ),
+                        ),
+                        (
+                            "can_create_unlimited_campaigns",
+                            models.BooleanField(
+                                default=False, verbose_name="Campagnes illimitées"
+                            ),
+                        ),
+                        (
+                            "priority_support",
+                            models.BooleanField(
+                                default=False, verbose_name="Support prioritaire"
+                            ),
+                        ),
+                        (
+                            "verified_badge",
+                            models.BooleanField(
+                                default=False, verbose_name="Badge vérifié"
+                            ),
+                        ),
+                        (
+                            "commission_rate",
+                            models.DecimalField(
+                                decimal_places=2,
+                                default=15.0,
+                                max_digits=5,
+                                verbose_name="Taux de commission (%)",
+                            ),
+                        ),
+                        (
+                            "is_active",
+                            models.BooleanField(default=True, verbose_name="Actif"),
+                        ),
+                        ("created_at", models.DateTimeField(auto_now_add=True)),
+                        ("updated_at", models.DateTimeField(auto_now=True)),
+                    ],
+                    options={
+                        "verbose_name": "Plan d'abonnement",
+                        "verbose_name_plural": "Plans d'abonnement",
+                        "ordering": ["price"],
+                        "db_table": "core_subscriptionplan",
+                    },
+                ),
+                migrations.CreateModel(
+                    name="Subscription",
+                    fields=[
+                        (
+                            "id",
+                            models.BigAutoField(
+                                auto_created=True,
+                                primary_key=True,
+                                serialize=False,
+                                verbose_name="ID",
+                            ),
+                        ),
+                        (
+                            "status",
+                            models.CharField(
+                                choices=[
+                                    ("active", "Actif"),
+                                    ("cancelled", "Annulé"),
+                                    ("expired", "Expiré"),
+                                    ("pending", "En attente"),
+                                ],
+                                default="pending",
+                                max_length=20,
+                                verbose_name="Statut",
+                            ),
+                        ),
+                        (
+                            "start_date",
+                            models.DateTimeField(verbose_name="Date de début"),
+                        ),
+                        ("end_date", models.DateTimeField(verbose_name="Date de fin")),
+                        (
+                            "auto_renew",
+                            models.BooleanField(
+                                default=True, verbose_name="Renouvellement automatique"
+                            ),
+                        ),
+                        (
+                            "payment_method",
+                            models.CharField(
+                                blank=True,
+                                max_length=50,
+                                verbose_name="Méthode de paiement",
+                            ),
+                        ),
+                        (
+                            "payment_id",
+                            models.CharField(
+                                blank=True,
+                                max_length=100,
+                                verbose_name="ID de paiement",
+                            ),
+                        ),
+                        ("created_at", models.DateTimeField(auto_now_add=True)),
+                        ("updated_at", models.DateTimeField(auto_now=True)),
+                        (
+                            "user",
+                            models.ForeignKey(
+                                on_delete=django.db.models.deletion.CASCADE,
+                                related_name="subscriptions",
+                                to=settings.AUTH_USER_MODEL,
+                            ),
+                        ),
+                        (
+                            "plan",
+                            models.ForeignKey(
+                                on_delete=django.db.models.deletion.PROTECT,
+                                related_name="subscriptions",
+                                to="billing.subscriptionplan",
+                            ),
+                        ),
+                    ],
+                    options={
+                        "verbose_name": "Abonnement",
+                        "verbose_name_plural": "Abonnements",
+                        "ordering": ["-created_at"],
+                        "db_table": "core_subscription",
+                    },
+                ),
+                migrations.CreateModel(
+                    name="Transaction",
+                    fields=[
+                        (
+                            "id",
+                            models.BigAutoField(
+                                auto_created=True,
+                                primary_key=True,
+                                serialize=False,
+                                verbose_name="ID",
+                            ),
+                        ),
+                        (
+                            "transaction_type",
+                            models.CharField(
+                                choices=[
+                                    ("commission", "Commission"),
+                                    ("subscription", "Abonnement"),
+                                    ("refund", "Remboursement"),
+                                    ("bonus", "Bonus"),
+                                ],
+                                max_length=20,
+                                verbose_name="Type de transaction",
+                            ),
+                        ),
+                        (
+                            "status",
+                            models.CharField(
+                                choices=[
+                                    ("pending", "En attente"),
+                                    ("completed", "Complété"),
+                                    ("failed", "Échoué"),
+                                    ("refunded", "Remboursé"),
+                                ],
+                                default="pending",
+                                max_length=20,
+                                verbose_name="Statut",
+                            ),
+                        ),
+                        (
+                            "amount",
+                            models.DecimalField(
+                                decimal_places=2, max_digits=10, verbose_name="Montant"
+                            ),
+                        ),
+                        (
+                            "commission_rate",
+                            models.DecimalField(
+                                decimal_places=2,
+                                max_digits=5,
+                                verbose_name="Taux de commission (%)",
+                            ),
+                        ),
+                        (
+                            "commission_amount",
+                            models.DecimalField(
+                                decimal_places=2,
+                                max_digits=10,
+                                verbose_name="Montant de la commission",
+                            ),
+                        ),
+                        (
+                            "description",
+                            models.TextField(blank=True, verbose_name="Description"),
+                        ),
+                        (
+                            "payment_id",
+                            models.CharField(
+                                blank=True,
+                                max_length=100,
+                                verbose_name="ID de paiement",
+                            ),
+                        ),
+                        ("created_at", models.DateTimeField(auto_now_add=True)),
+                        ("updated_at", models.DateTimeField(auto_now=True)),
+                        (
+                            "user",
+                            models.ForeignKey(
+                                on_delete=django.db.models.deletion.CASCADE,
+                                related_name="transactions",
+                                to=settings.AUTH_USER_MODEL,
+                            ),
+                        ),
+                        (
+                            "currency",
+                            models.ForeignKey(
+                                null=True,
+                                on_delete=django.db.models.deletion.SET_NULL,
+                                to="core.currency",
+                                verbose_name="Devise",
+                            ),
+                        ),
+                        (
+                            "campaign",
+                            models.ForeignKey(
+                                blank=True,
+                                null=True,
+                                on_delete=django.db.models.deletion.SET_NULL,
+                                related_name="transactions",
+                                to="campaigns.campaign",
+                            ),
+                        ),
+                        (
+                            "application",
+                            models.ForeignKey(
+                                blank=True,
+                                null=True,
+                                on_delete=django.db.models.deletion.SET_NULL,
+                                related_name="transactions",
+                                to="applications.application",
+                            ),
+                        ),
+                        (
+                            "subscription",
+                            models.ForeignKey(
+                                blank=True,
+                                null=True,
+                                on_delete=django.db.models.deletion.SET_NULL,
+                                related_name="transactions",
+                                to="billing.subscription",
+                            ),
+                        ),
+                    ],
+                    options={
+                        "verbose_name": "Transaction",
+                        "verbose_name_plural": "Transactions",
+                        "ordering": ["-created_at"],
+                        "db_table": "core_transaction",
+                    },
+                ),
+            ],
+            database_operations=[],
+        ),
+    ]

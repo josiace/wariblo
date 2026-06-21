@@ -1,11 +1,15 @@
 from django.contrib import admin
 from django.utils.html import format_html
+from django.urls import reverse
+from django.contrib import messages
 from .models import InfluencerProfile
+from messaging.models import Conversation, Message
+from accounts.models import User
 
 
 @admin.register(InfluencerProfile)
 class InfluencerProfileAdmin(admin.ModelAdmin):
-    list_display = ['get_name', 'get_email', 'get_niche', 'location', 'get_followers', 'get_rate', 'created_at']
+    list_display = ['get_name', 'get_email', 'get_niche', 'location', 'get_followers', 'get_rate', 'get_contact_button', 'created_at']
     list_filter = ['niche', 'location', 'created_at']
     search_fields = ['full_name', 'user__email', 'location']
     readonly_fields = ['total_followers', 'created_at', 'updated_at']
@@ -32,6 +36,36 @@ class InfluencerProfileAdmin(admin.ModelAdmin):
             'fields': ('created_at', 'updated_at')
         }),
     )
+    
+    actions = ['contact_selected_influencers']
+    
+    def get_contact_button(self, obj):
+        if obj.user:
+            url = reverse('messaging:conversation_create', args=[obj.user.id])
+            return format_html('<a href="{}" class="button" style="background: linear-gradient(135deg, #FF6B35, #004E89); color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-weight: 600;">💬 Contacter</a>', url)
+        return '—'
+    get_contact_button.short_description = 'Contacter'
+    
+    def contact_selected_influencers(self, request, queryset):
+        """Contacter les influenceurs sélectionnés"""
+        count = 0
+        for profile in queryset:
+            if profile.user:
+                # Créer une conversation avec l'admin
+                admin_user = request.user
+                conversation, created = Conversation.objects.get_or_create(
+                    participants__in=[admin_user, profile.user]
+                )
+                if created:
+                    conversation.participants.add(admin_user, profile.user)
+                count += 1
+        
+        if count > 0:
+            self.message_user(request, f"{count} conversation(s) créée(s). Vous pouvez maintenant envoyer des messages.")
+        else:
+            self.message_user(request, "Aucune conversation créée. Les influenceurs sélectionnés n'ont pas d'utilisateur associé.")
+    
+    contact_selected_influencers.short_description = "💬 Contacter les influenceurs sélectionnés"
     
     def get_name(self, obj):
         return format_html('<strong>{}</strong>', obj.full_name)

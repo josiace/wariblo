@@ -5,69 +5,114 @@
 {% block content %}
 <div class="container py-5">
     <div class="row justify-content-center">
-        <div class="col-md-6 col-lg-5">
+        <div class="col-md-8 col-lg-6">
             <div class="card">
                 <div class="card-header">
                     <h2 class="text-center">Créer un compte</h2>
+                    <div class="step-indicator">
+                        <div class="step active" data-step="1">
+                            <span class="step-number">1</span>
+                            <span class="step-label">Rôle</span>
+                        </div>
+                        <div class="step" data-step="2">
+                            <span class="step-number">2</span>
+                            <span class="step-label">Infos</span>
+                        </div>
+                        <div class="step" data-step="3">
+                            <span class="step-number">3</span>
+                            <span class="step-label">Sécurité</span>
+                        </div>
+                    </div>
                 </div>
                 <div class="card-body">
-                    <form method="post" autocomplete="off">
+                    <form method="post" autocomplete="off" id="registrationForm">
                         {% csrf_token %}
+                        {{ form.username }}
                         {% if form.non_field_errors %}
                             <div class="alert alert-danger" role="alert">
                                 {{ form.non_field_errors }}
                             </div>
                         {% endif %}
-                        <div class="form-group">
-                            <label for="{{ form.username.id_for_label }}" class="form-label">Nom d'utilisateur</label>
-                            {{ form.username }}
-                            {% if form.username.errors %}
-                                <div class="form-error" role="alert">{{ form.username.errors }}</div>
-                            {% endif %}
-                        </div>
-                        <div class="form-group">
-                            <label for="{{ form.email.id_for_label }}" class="form-label">Email</label>
-                            {{ form.email }}
-                            {% if form.email.errors %}
-                                <div class="form-error" role="alert">{{ form.email.errors }}</div>
-                            {% endif %}
-                        </div>
-                        <div class="form-group">
-                            <label for="{{ form.phone_number.id_for_label }}" class="form-label">Numéro de téléphone</label>
-                            {{ form.phone_number }}
-                            {% if form.phone_number.errors %}
-                                <div class="form-error" role="alert">{{ form.phone_number.errors }}</div>
-                            {% endif %}
-                        </div>
-                        <div class="form-group">
-                            <label for="{{ form.country.id_for_label }}" class="form-label">Pays</label>
-                            {{ form.country }}
-                            {% if form.country.errors %}
-                                <div class="form-error" role="alert">{{ form.country.errors }}</div>
-                            {% endif %}
-                        </div>
-                        <div class="form-group">
-                            <label for="{{ form.role.id_for_label }}" class="form-label">Je suis</label>
+                        
+                        <!-- Étape 1: Choix du rôle -->
+                        <div class="registration-step active" data-step="1">
+                            <h3 class="text-center mb-4">Choisissez votre type de compte</h3>
+                            <div class="role-selection">
+                                <div class="role-card" data-role="influencer">
+                                    <div class="role-icon">🎯</div>
+                                    <h4>Influenceur</h4>
+                                    <p>Je crée du contenu sur les réseaux sociaux et je souhaite collaborer avec des marques</p>
+                                    <ul class="role-benefits">
+                                        <li>✓ Accès aux campagnes payantes</li>
+                                        <li>✓ Collaboration avec des marques</li>
+                                        <li>✓ Suivi des candidatures</li>
+                                    </ul>
+                                </div>
+                                <div class="role-card" data-role="advertiser">
+                                    <div class="role-icon">🏢</div>
+                                    <h4>Annonceur</h4>
+                                    <p>Je représente une marque et je cherche des influenceurs pour mes campagnes</p>
+                                    <ul class="role-benefits">
+                                        <li>✓ Création de campagnes</li>
+                                        <li>✓ Accès aux profils d'influenceurs</li>
+                                        <li>✓ Gestion des candidatures</li>
+                                    </ul>
+                                </div>
+                            </div>
                             {{ form.role }}
-                            {% if form.role.errors %}
-                                <div class="form-error" role="alert">{{ form.role.errors }}</div>
-                            {% endif %}
                         </div>
-                        <div class="form-group">
-                            <label for="{{ form.password1.id_for_label }}" class="form-label">Mot de passe</label>
-                            {{ form.password1 }}
-                            {% if form.password1.errors %}
-                                <div class="form-error" role="alert">{{ form.password1.errors }}</div>
-                            {% endif %}
+                        
+                        <!-- Étape 2: Informations personnelles -->
+                        <div class="registration-step" data-step="2">
+                            <h3 class="text-center mb-4">Vos informations</h3>
+                            <div class="form-group">
+                                <label for="{{ form.email.id_for_label }}" class="form-label">Email</label>
+                                {{ form.email }}
+                                {% if form.email.errors %}
+                                    <div class="form-error" role="alert">{{ form.email.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="form-group">
+                                <label for="{{ form.phone_number.id_for_label }}" class="form-label">Numéro de téléphone</label>
+                                {{ form.phone_number }}
+                                {% if form.phone_number.errors %}
+                                    <div class="form-error" role="alert">{{ form.phone_number.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="form-group">
+                                <label for="{{ form.country.id_for_label }}" class="form-label">Pays</label>
+                                {{ form.country }}
+                                {% if form.country.errors %}
+                                    <div class="form-error" role="alert">{{ form.country.errors }}</div>
+                                {% endif %}
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="{{ form.password2.id_for_label }}" class="form-label">Confirmer le mot de passe</label>
-                            {{ form.password2 }}
-                            {% if form.password2.errors %}
-                                <div class="form-error" role="alert">{{ form.password2.errors }}</div>
-                            {% endif %}
+                        
+                        <!-- Étape 3: Mot de passe -->
+                        <div class="registration-step" data-step="3">
+                            <h3 class="text-center mb-4">Sécurisez votre compte</h3>
+                            <div class="form-group">
+                                <label for="{{ form.password1.id_for_label }}" class="form-label">Mot de passe</label>
+                                {{ form.password1 }}
+                                {% if form.password1.errors %}
+                                    <div class="form-error" role="alert">{{ form.password1.errors }}</div>
+                                {% endif %}
+                                <small class="text-muted">Au moins 8 caractères, incluant des lettres et des chiffres</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="{{ form.password2.id_for_label }}" class="form-label">Confirmer le mot de passe</label>
+                                {{ form.password2 }}
+                                {% if form.password2.errors %}
+                                    <div class="form-error" role="alert">{{ form.password2.errors }}</div>
+                                {% endif %}
+                            </div>
                         </div>
-                        <button type="submit" class="btn btn-primary w-100">S'inscrire</button>
+                        
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-outline" id="prevBtn" style="display: none;">Précédent</button>
+                            <button type="button" class="btn btn-primary" id="nextBtn">Suivant</button>
+                            <button type="submit" class="btn btn-primary" id="submitBtn" style="display: none;">S'inscrire</button>
+                        </div>
                     </form>
                     <p class="text-center mt-3">
                         Vous avez déjà un compte? <a href="{% url 'login' %}">Connexion</a>
@@ -77,4 +122,247 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.step-indicator {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-xl);
+}
+
+.step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-xs);
+    opacity: 0.5;
+    transition: opacity 0.3s ease;
+}
+
+.step.active {
+    opacity: 1;
+}
+
+.step.completed {
+    opacity: 1;
+}
+
+.step-number {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: var(--text-muted);
+    transition: all 0.3s ease;
+}
+
+.step.active .step-number {
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    color: white;
+}
+
+.step.completed .step-number {
+    background: var(--success-color);
+    color: white;
+}
+
+.step-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+.registration-step {
+    display: none;
+}
+
+.registration-step.active {
+    display: block;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.role-selection {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-xl);
+}
+
+.role-card {
+    border: 2px solid var(--border-color);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-xl);
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: var(--bg-white);
+}
+
+.role-card:hover {
+    border-color: var(--primary-color);
+    transform: translateY(-4px);
+    box-shadow: var(--shadow);
+}
+
+.role-card.selected {
+    border-color: var(--primary-color);
+    background: linear-gradient(135deg, #FFF5F0, #FFE8DC);
+}
+
+.role-icon {
+    font-size: 3rem;
+    margin-bottom: var(--spacing-md);
+}
+
+.role-card h4 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: var(--spacing-sm);
+    color: var(--text-dark);
+}
+
+.role-card p {
+    color: var(--text-muted);
+    margin-bottom: var(--spacing-md);
+    font-size: 0.9rem;
+}
+
+.role-benefits {
+    list-style: none;
+    padding: 0;
+    text-align: left;
+}
+
+.role-benefits li {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    margin-bottom: var(--spacing-xs);
+}
+
+.form-actions {
+    display: flex;
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-xl);
+}
+
+.form-actions .btn {
+    flex: 1;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .step-indicator {
+        gap: var(--spacing-md);
+    }
+    
+    .step-number {
+        width: 32px;
+        height: 32px;
+        font-size: 0.9rem;
+    }
+    
+    .step-label {
+        font-size: 0.75rem;
+    }
+    
+    .role-selection {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const steps = document.querySelectorAll('.registration-step');
+const stepIndicators = document.querySelectorAll('.step');
+const roleCards = document.querySelectorAll('.role-card');
+const roleSelect = document.querySelector('#id_role');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const submitBtn = document.getElementById('submitBtn');
+let currentStep = 1;
+
+// Sélection du rôle
+roleCards.forEach(card => {
+    card.addEventListener('click', function() {
+        roleCards.forEach(c => c.classList.remove('selected'));
+        this.classList.add('selected');
+        roleSelect.value = this.dataset.role;
+    });
+});
+
+// Navigation entre étapes
+function showStep(step) {
+    steps.forEach(s => s.classList.remove('active'));
+    stepIndicators.forEach(s => {
+        s.classList.remove('active');
+        const stepNum = parseInt(s.dataset.step);
+        if (stepNum < step) {
+            s.classList.add('completed');
+        } else {
+            s.classList.remove('completed');
+        }
+    });
+    
+    const currentStepEl = document.querySelector(`.registration-step[data-step="${step}"]`);
+    const currentIndicator = document.querySelector(`.step[data-step="${step}"]`);
+    
+    currentStepEl.classList.add('active');
+    currentIndicator.classList.add('active');
+    
+    // Gérer les boutons
+    prevBtn.style.display = step === 1 ? 'none' : 'block';
+    nextBtn.style.display = step === 3 ? 'none' : 'block';
+    submitBtn.style.display = step === 3 ? 'block' : 'none';
+    
+    currentStep = step;
+}
+
+nextBtn.addEventListener('click', function() {
+    if (currentStep === 1) {
+        // Vérifier qu'un rôle est sélectionné
+        if (!roleSelect.value) {
+            alert('Veuillez sélectionner un type de compte');
+            return;
+        }
+    }
+    
+    if (currentStep < 3) {
+        showStep(currentStep + 1);
+    }
+});
+
+prevBtn.addEventListener('click', function() {
+    if (currentStep > 1) {
+        showStep(currentStep - 1);
+    }
+});
+
+// Soumettre le formulaire
+submitBtn.addEventListener('click', function() {
+    document.getElementById('registrationForm').submit();
+});
+
+// Initialiser
+showStep(1);
+</script>
 {% endblock %}

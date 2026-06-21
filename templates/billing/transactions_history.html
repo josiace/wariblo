@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block title %}Historique des transactions - Wariblo{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="mb-4">Historique des transactions</h1>
+    
+    <div class="card">
+        <div class="card-body">
+            {% if transactions %}
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Type</th>
+                            <th>Description</th>
+                            <th>Montant</th>
+                            <th>Statut</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for transaction in transactions %}
+                        <tr>
+                            <td>{{ transaction.created_at|date:"d/m/Y H:i" }}</td>
+                            <td>{{ transaction.get_transaction_type_display }}</td>
+                            <td>{{ transaction.description }}</td>
+                            <td>{{ transaction.amount }} {{ transaction.currency.symbol|default:default_currency_symbol }}</td>
+                            <td>
+                                <span class="badge badge-{{ transaction.status }}">
+                                    {{ transaction.get_status_display }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="text-muted text-center">Aucune transaction trouvée</p>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="mt-4">
+        <a href="{% url 'my_subscription' %}" class="btn btn-outline">Retour à mon abonnement</a>
+    </div>
+</div>
+
+<style>
+.badge-pending {
+    background: var(--warning-color);
+    color: white;
+}
+
+.badge-completed {
+    background: var(--success-color);
+    color: white;
+}
+
+.badge-failed {
+    background: var(--danger-color);
+    color: white;
+}
+
+.badge-refunded {
+    background: var(--text-muted);
+    color: white;
+}
+</style>
+{% endblock %}

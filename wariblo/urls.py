@@ -33,6 +33,7 @@ urlpatterns = [
     path('reviews/', include('reviews.urls')),
     path('about/', include('core.urls')),
     path('api/', include('api.urls')),
+    path('billing/', include('billing.urls')),
 ]
 
 if settings.DEBUG:

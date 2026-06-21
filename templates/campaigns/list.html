@@ -10,9 +10,72 @@
         <p class="page-subtitle">Trouvez la campagne parfaite pour vous</p>
     </div>
     
+    <!-- Filtres rapides -->
+    <div class="quick-filters mb-4">
+        <button class="filter-chip active" data-filter="all">Tout</button>
+        <button class="filter-chip" data-filter="instagram">📷 Instagram</button>
+        <button class="filter-chip" data-filter="tiktok">🎵 TikTok</button>
+        <button class="filter-chip" data-filter="youtube">📺 YouTube</button>
+        <button class="filter-chip" data-filter="fashion">👗 Fashion</button>
+        <button class="filter-chip" data-filter="tech">💻 Tech</button>
+        <button class="filter-chip" data-filter="lifestyle">🌟 Lifestyle</button>
+    </div>
+    
+    <!-- Recommandations personnalisées -->
+    {% if recommended_campaigns %}
+    <div class="recommendations-section mb-4">
+        <div class="recommendations-header">
+            <h3>🎯 Recommandé pour vous</h3>
+            <p>Basé sur votre profil: {% if user.is_influencer %}{{ user.influencer_profile.niche|title }}{% endif %}</p>
+        </div>
+        <div class="campaigns-grid">
+            {% for campaign in recommended_campaigns %}
+                <div class="campaign-card recommended">
+                    <div class="campaign-header">
+                        <h3 class="campaign-title">{{ campaign.title }}</h3>
+                        <span class="recommendation-badge">⭐ Recommandé</span>
+                    </div>
+                    <div class="campaign-meta">
+                        <span class="platform-badge platform-{{ campaign.platform }}">
+                            {% if campaign.platform == 'instagram' %}📷 Instagram
+                            {% elif campaign.platform == 'tiktok' %}🎵 TikTok
+                            {% elif campaign.platform == 'youtube' %}📺 YouTube
+                            {% elif campaign.platform == 'twitter' %}🐦 Twitter/X
+                            {% elif campaign.platform == 'facebook' %}👤 Facebook
+                            {% else %}🌐 Multiple
+                            {% endif %}
+                        </span>
+                        <span class="meta-tag">{{ campaign.niche }}</span>
+                    </div>
+                    <p class="campaign-description">{{ campaign.description|truncatewords:25 }}</p>
+                    <div class="campaign-details">
+                        <div class="detail-item">
+                            <span class="detail-icon">💰</span>
+                            <span class="detail-text">{{ campaign.budget|convert_currency:user }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-icon">📅</span>
+                            <span class="detail-text">{{ campaign.deadline|date:"M d, Y" }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-icon">📊</span>
+                            <span class="detail-text">{{ campaign.applications_count }} candidatures</span>
+                        </div>
+                    </div>
+                    <a href="{% url 'campaign_detail' campaign.pk %}" class="btn btn-primary btn-block">Voir détails</a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    
     <!-- Filtres avancés -->
     <div class="filters-container">
-        <form method="get" class="filters-form">
+        <button class="filters-toggle" id="filtersToggle">
+            <span>⚙️ Filtres avancés</span>
+            <span class="toggle-icon">▼</span>
+        </button>
+        <form method="get" class="filters-form" id="filtersForm" style="display: none;">
             <div class="filters-grid">
                 <div class="filter-group">
                     <label class="filter-label">🔍 Mots-clés</label>
@@ -368,6 +431,148 @@
         flex-direction: column;
         gap: var(--spacing-md);
     }
+    
+    .quick-filters {
+        flex-wrap: wrap;
+    }
+}
+
+.quick-filters {
+    display: flex;
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+    margin-bottom: var(--spacing-lg);
+}
+
+.filter-chip {
+    padding: var(--spacing-sm) var(--spacing-md);
+    border: 2px solid var(--border-color);
+    border-radius: 9999px;
+    background: var(--bg-white);
+    color: var(--text-muted);
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.filter-chip:hover {
+    border-color: var(--primary-color);
+    background: linear-gradient(135deg, #FFF5F0, #FFE8DC);
+    color: var(--primary-color);
+}
+
+.filter-chip.active {
+    border-color: var(--primary-color);
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    color: white;
+}
+
+.filters-toggle {
+    width: 100%;
+    padding: var(--spacing-md);
+    border: 2px solid var(--border-color);
+    border-radius: var(--border-radius);
+    background: var(--bg-white);
+    color: var(--text-dark);
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s ease;
+}
+
+.filters-toggle:hover {
+    border-color: var(--primary-color);
+}
+
+.toggle-icon {
+    transition: transform 0.3s ease;
+}
+
+.filters-toggle.active .toggle-icon {
+    transform: rotate(180deg);
+}
+
+.recommendations-section {
+    background: linear-gradient(135deg, #FFF5F0, #FFE8DC);
+    border: 2px solid var(--primary-color);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-xl);
+    margin-bottom: var(--spacing-xl);
+}
+
+.recommendations-header {
+    text-align: center;
+    margin-bottom: var(--spacing-xl);
+}
+
+.recommendations-header h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: var(--spacing-sm);
+}
+
+.recommendations-header p {
+    color: var(--text-muted);
+    font-size: 1rem;
+}
+
+.campaign-card.recommended {
+    border-color: var(--primary-color);
+    background: var(--bg-white);
+}
+
+.recommendation-badge {
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    color: white;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: 9999px;
+    font-size: 0.8rem;
+    font-weight: 600;
 }
 </style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Filtres rapides
+const filterChips = document.querySelectorAll('.filter-chip');
+filterChips.forEach(chip => {
+    chip.addEventListener('click', function() {
+        const filter = this.dataset.filter;
+        
+        // Mettre à jour l'UI
+        filterChips.forEach(c => c.classList.remove('active'));
+        this.classList.add('active');
+        
+        // Rediriger avec le filtre
+        const url = new URL(window.location);
+        if (filter === 'all') {
+            url.searchParams.delete('platform');
+            url.searchParams.delete('niche');
+        } else if (['instagram', 'tiktok', 'youtube', 'twitter', 'facebook'].includes(filter)) {
+            url.searchParams.set('platform', filter);
+            url.searchParams.delete('niche');
+        } else {
+            url.searchParams.set('niche', filter);
+            url.searchParams.delete('platform');
+        }
+        window.location = url.toString();
+    });
+});
+
+// Toggle filtres avancés
+const filtersToggle = document.getElementById('filtersToggle');
+const filtersForm = document.getElementById('filtersForm');
+filtersToggle.addEventListener('click', function() {
+    this.classList.toggle('active');
+    filtersForm.style.display = filtersForm.style.display === 'none' ? 'block' : 'none';
+});
+</script>
 {% endblock %}

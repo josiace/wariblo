@@ -10,6 +10,7 @@ class RegistrationForm(UserCreationForm):
     role = forms.ChoiceField(choices=User.ROLE_CHOICES, required=True)
     phone_number = forms.CharField(required=True, max_length=20)
     country = forms.ModelChoiceField(queryset=Country.objects.filter(is_active=True), required=True)
+    username = forms.CharField(required=False, widget=forms.HiddenInput)
     
     class Meta:
         model = User
@@ -27,6 +28,9 @@ class RegistrationForm(UserCreationForm):
         user.role = self.cleaned_data['role']
         user.phone_number = self.cleaned_data['phone_number']
         user.country = self.cleaned_data['country']
+        # Générer un username automatiquement à partir de l'email
+        if not user.username:
+            user.username = self.cleaned_data['email'].split('@')[0]
         if commit:
             user.save()
         return user

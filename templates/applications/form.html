@@ -17,6 +17,28 @@
                         </div>
                     {% endif %}
                     
+                    <!-- Assistant de prix -->
+                    {% if suggested_price %}
+                    <div class="price-suggestion mb-4">
+                        <h4>💰 Suggestion de prix</h4>
+                        <p>Basé sur votre profil et le budget de la campagne</p>
+                        <div class="price-range">
+                            <div class="price-item">
+                                <span class="price-label">Min</span>
+                                <span class="price-value">{{ price_min|convert_currency:user }}</span>
+                            </div>
+                            <div class="price-item recommended">
+                                <span class="price-label">Recommandé</span>
+                                <span class="price-value">{{ suggested_price|convert_currency:user }}</span>
+                            </div>
+                            <div class="price-item">
+                                <span class="price-label">Max</span>
+                                <span class="price-value">{{ price_max|convert_currency:user }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
                     <form method="post">
                         {% csrf_token %}
                         <div class="form-group">
@@ -33,6 +55,9 @@
                             {% if form.proposed_price.errors %}
                                 <div class="form-error">{{ form.proposed_price.errors }}</div>
                             {% endif %}
+                            {% if suggested_price %}
+                            <small class="form-text text-muted">Suggestion: {{ suggested_price|convert_currency:user }}</small>
+                            {% endif %}
                         </div>
                         <div class="mt-4">
                             <button type="submit" class="btn btn-primary">Soumettre la candidature</button>
@@ -44,4 +69,78 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.price-suggestion {
+    background: linear-gradient(135deg, #FFF5F0, #FFE8DC);
+    border: 2px solid var(--primary-color);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-xl);
+    margin-bottom: var(--spacing-xl);
+}
+
+.price-suggestion h4 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: var(--spacing-xs);
+}
+
+.price-suggestion p {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: var(--spacing-lg);
+}
+
+.price-range {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--spacing-md);
+}
+
+.price-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-xs);
+    flex: 1;
+}
+
+.price-item.recommended {
+    background: var(--bg-white);
+    border: 2px solid var(--primary-color);
+    border-radius: var(--border-radius);
+    padding: var(--spacing-md);
+}
+
+.price-label {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+.price-value {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+.price-item.recommended .price-value {
+    color: var(--primary-color);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .price-range {
+        flex-direction: column;
+    }
+    
+    .price-item {
+        flex-direction: row;
+        justify-content: space-between;
+    }
+}
+</style>
 {% endblock %}

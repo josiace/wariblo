@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block title %}Annuler l'abonnement - Wariblo{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="text-center">Annuler l'abonnement</h2>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning mb-4">
+                        <strong>⚠️ Attention:</strong> Vous êtes sur le point d'annuler votre abonnement au plan <strong>{{ subscription.plan.name }}</strong>.
+                    </div>
+                    
+                    <div class="cancellation-info mb-4">
+                        <h4>Ce qui va se passer:</h4>
+                        <ul>
+                            <li>Votre abonnement restera actif jusqu'au <strong>{{ subscription.end_date|date:"d/m/Y" }}</strong></li>
+                            <li>Vous aurez accès à toutes les fonctionnalités jusqu'à cette date</li>
+                            <li>Le renouvellement automatique sera désactivé</li>
+                            <li>Vous pourrez vous réabonner à tout moment</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="plan-summary mb-4">
+                        <h5>Plan actuel: {{ subscription.plan.name }}</h5>
+                        <p>Prix: {{ subscription.plan.price }} {{ subscription.plan.currency.symbol|default:default_currency_symbol }}/mois</p>
+                        <p>Date de fin: {{ subscription.end_date|date:"d/m/Y" }}</p>
+                    </div>
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="form-actions">
+                            <a href="{% url 'my_subscription' %}" class="btn btn-outline">Garder mon abonnement</a>
+                            <button type="submit" class="btn btn-danger">Confirmer l'annulation</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.cancellation-info {
+    background: var(--bg-light);
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+}
+
+.cancellation-info h4 {
+    margin-bottom: 1rem;
+    color: var(--text-dark);
+}
+
+.cancellation-info ul {
+    list-style: none;
+    padding: 0;
+}
+
+.cancellation-info li {
+    padding: 0.5rem 0;
+    color: var(--text-muted);
+}
+
+.plan-summary {
+    background: var(--bg-light);
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+}
+
+.form-actions {
+    display: flex;
+    gap: var(--spacing-md);
+}
+</style>
+{% endblock %}

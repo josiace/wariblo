@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from core.models import Currency, Country
+from core.models import Currency, Country, SiteSettings
 
 
 class Command(BaseCommand):
@@ -88,5 +88,28 @@ class Command(BaseCommand):
                 self.stdout.write(self.style.WARNING(f'Pays non trouvé: {country_code}'))
             except Currency.DoesNotExist:
                 self.stdout.write(self.style.WARNING(f'Devise non trouvée: {currency_code}'))
+
+        # Créer ou mettre à jour la configuration du site avec USD comme devise par défaut
+        usd_currency = Currency.objects.get(code='USD')
+        site_settings, created = SiteSettings.objects.get_or_create(
+            pk=1,
+            defaults={
+                'site_name': 'Wariblo',
+                'site_description': 'Plateforme de Marketing d\'Influence en Afrique',
+                'contact_email': 'contact@wariblo.com',
+                'default_currency': usd_currency,
+            }
+        )
+        
+        if created:
+            self.stdout.write(self.style.SUCCESS(f'Configuration du site créée avec devise par défaut: {usd_currency.code}'))
+        else:
+            # Mettre à jour la devise par défaut si elle n'est pas définie
+            if not site_settings.default_currency:
+                site_settings.default_currency = usd_currency
+                site_settings.save()
+                self.stdout.write(self.style.SUCCESS(f'Devise par défaut définie: {usd_currency.code}'))
+            else:
+                self.stdout.write(self.style.WARNING(f'Configuration du site existe déjà avec devise: {site_settings.default_currency.code}'))
 
         self.stdout.write(self.style.SUCCESS('Chargement des devises terminé!'))

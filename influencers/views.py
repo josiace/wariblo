@@ -112,3 +112,46 @@ def influencer_applications(request):
     return render(request, 'influencers/applications.html', context)
 
 
+def influencer_list(request):
+    """Liste de tous les influenceurs (accessible aux annonceurs)"""
+    influencers = InfluencerProfile.objects.filter(
+        user__is_active=True
+    ).select_related('user').order_by('-instagram_followers')
+    
+    # Filtrage par niche
+    niche_filter = request.GET.get('niche')
+    if niche_filter:
+        influencers = influencers.filter(niche=niche_filter)
+    
+    # Filtrage par localisation
+    location_filter = request.GET.get('location')
+    if location_filter:
+        influencers = influencers.filter(location__icontains=location_filter)
+    
+    paginator = Paginator(influencers, 12)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    context = {
+        'page_obj': page_obj,
+        'influencers': page_obj,
+        'niche_choices': InfluencerProfile.NICHE_CHOICES,
+        'current_niche': niche_filter,
+        'current_location': location_filter,
+    }
+    return render(request, 'influencers/list.html', context)
+
+
+def influencer_detail(request, pk):
+    """Détail d'un influenceur"""
+    influencer = get_object_or_404(
+        InfluencerProfile.objects.select_related('user'),
+        pk=pk
+    )
+    
+    context = {
+        'influencer': influencer,
+    }
+    return render(request, 'influencers/detail.html', context)
+
+

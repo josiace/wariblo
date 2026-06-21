@@ -14,6 +14,76 @@
     {% block extra_css %}{% endblock %}
 </head>
 <body>
+    <style>
+    .global-search {
+        display: flex;
+        gap: var(--spacing-sm);
+        align-items: center;
+        flex: 1;
+        max-width: 400px;
+        margin: 0 var(--spacing-lg);
+    }
+    
+    .search-input {
+        flex: 1;
+        padding: var(--spacing-sm) var(--spacing-md);
+        border: 2px solid var(--border-color);
+        border-radius: 9999px;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+    }
+    
+    .search-input:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(255, 69, 0, 0.1);
+    }
+    
+    .search-button {
+        padding: var(--spacing-sm) var(--spacing-md);
+        background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+        color: white;
+        border: none;
+        border-radius: 9999px;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+    
+    .search-button:hover {
+        transform: scale(1.05);
+        box-shadow: var(--shadow);
+    }
+    
+    .footer-links {
+        display: flex;
+        gap: var(--spacing-lg);
+        flex-wrap: wrap;
+        margin-top: var(--spacing-md);
+    }
+    
+    .footer-links a {
+        color: var(--text-muted);
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+    
+    .footer-links a:hover {
+        color: var(--primary-color);
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .global-search {
+            display: none;
+        }
+        
+        .footer-links {
+            flex-direction: column;
+            gap: var(--spacing-sm);
+        }
+    }
+    </style>
     <nav class="navbar">
         <div class="navbar-container">
             <a class="navbar-brand" href="{% url 'home' %}">
@@ -24,17 +94,20 @@
                 <span></span>
                 <span></span>
             </button>
+            
+            <!-- Recherche globale -->
+            <div class="global-search">
+                <input type="text" placeholder="Rechercher campagnes, influenceurs..." class="search-input">
+                <button class="search-button">🔍</button>
+            </div>
+            
             <ul class="navbar-nav" id="navbar-nav" role="menu">
                 <li><a class="nav-link" href="{% url 'home' %}" role="menuitem">Accueil</a></li>
                 <li><a class="nav-link" href="{% url 'campaign_list' %}" role="menuitem">Campagnes</a></li>
-                <li><a class="nav-link" href="{% url 'about' %}" role="menuitem">À propos</a></li>
-                <li><a class="nav-link" href="{% url 'contact' %}" role="menuitem">Contact</a></li>
             </ul>
             <div class="navbar-actions" id="navbar-actions">
                 {% if user.is_authenticated %}
-                    <a class="nav-link" href="{% url 'inbox' %}" role="menuitem">📧 Messages</a>
-                    <a class="nav-link" href="{% url 'dashboard' %}" role="menuitem">Tableau de bord</a>
-                    <a class="nav-link" href="{% url 'logout' %}" role="menuitem">Déconnexion</a>
+                    <a class="btn btn-primary" href="{% url 'logout' %}" role="menuitem">Déconnexion</a>
                 {% else %}
                     <a class="nav-link" href="{% url 'login' %}" role="menuitem">Connexion</a>
                     <a class="btn btn-primary" href="{% url 'register' %}" role="menuitem">S'inscrire</a>
@@ -62,6 +135,21 @@
             <div>
                 <div class="footer-title">Wariblo</div>
                 <p class="footer-text">Connecter les influenceurs et les annonceurs à travers l'Afrique.</p>
+            </div>
+            <div class="footer-links">
+                <a href="{% url 'about' %}">À propos</a>
+                <a href="{% url 'contact' %}">Contact</a>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'inbox' %}">📧 Messages</a>
+                    <a href="{% url 'billing:pricing_plans' %}">⭐ Abonnements</a>
+                    {% if user.is_influencer %}
+                        <a href="{% url 'influencer_campaigns' %}">Mes Campagnes</a>
+                        <a href="{% url 'influencer_applications' %}">Candidatures</a>
+                    {% elif user.is_advertiser %}
+                        <a href="{% url 'advertiser_campaigns' %}">Mes Campagnes</a>
+                        <a href="{% url 'campaign_create' %}">Créer une campagne</a>
+                    {% endif %}
+                {% endif %}
             </div>
             <p class="footer-text">&copy; 2026 Wariblo. Tous droits réservés.</p>
         </div>
@@ -106,6 +194,26 @@
                 nav.classList.remove('active');
                 actions.classList.remove('active');
             });
+        });
+        
+        // Global search
+        const searchInput = document.querySelector('.search-input');
+        const searchButton = document.querySelector('.search-button');
+        
+        searchButton.addEventListener('click', function() {
+            const query = searchInput.value.trim();
+            if (query) {
+                window.location.href = `/campaigns/?q=${encodeURIComponent(query)}`;
+            }
+        });
+        
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                const query = searchInput.value.trim();
+                if (query) {
+                    window.location.href = `/campaigns/?q=${encodeURIComponent(query)}`;
+                }
+            }
         });
     </script>
     {% block extra_js %}{% endblock %}

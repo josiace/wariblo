@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     'django_filters',
     'axes',
     'rest_framework',
+    'rest_framework.authtoken',
     'accounts',
     'influencers',
     'advertisers',
@@ -69,6 +70,7 @@ INSTALLED_APPS = [
     'core',
     'reviews',
     'analytics',
+    'billing',
 ]
 
 MIDDLEWARE = [
@@ -96,6 +98,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'core.context_processors.site_settings',
             ],
         },
     },
@@ -171,7 +174,12 @@ STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # WhiteNoise Configuration for serving static files
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_STORAGE = os.getenv(
+    'STATICFILES_STORAGE',
+    'django.contrib.staticfiles.storage.StaticFilesStorage'
+    if DEBUG
+    else 'whitenoise.storage.CompressedManifestStaticFilesStorage',
+)
 
 # Media files (User uploads)
 MEDIA_URL = 'media/'
@@ -179,6 +187,12 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 # Custom User Model
 AUTH_USER_MODEL = 'accounts.User'
+
+# Authentication Backends
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'axes.backends.AxesStandaloneBackend',
+]
 
 # Login/Logout URLs
 LOGIN_URL = 'login'
@@ -208,6 +222,13 @@ SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 X_FRAME_OPTIONS = 'DENY'
 
+# CSRF Trusted Origins for browser preview
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:4000',
+    'http://127.0.0.1:4000',
+    'http://127.0.0.1:63305',
+]
+
 # HSTS Settings
 SECURE_HSTS_SECONDS = int(os.getenv('SECURE_HSTS_SECONDS', '0'))
 SECURE_HSTS_INCLUDE_SUBDOMAINS = os.getenv('SECURE_HSTS_INCLUDE_SUBDOMAINS', 'False') == 'True'
@@ -217,10 +238,7 @@ SECURE_HSTS_PRELOAD = os.getenv('SECURE_HSTS_PRELOAD', 'False') == 'True'
 AXES_FAILURE_LIMIT = int(os.getenv('AXES_FAILURE_LIMIT', '5'))
 AXES_COOLOFF_TIME = int(os.getenv('AXES_COOLOFF_TIME', '30'))  # minutes
 AXES_RESET_ON_SUCCESS = True
-AXES_LOCK_OUT_BY_COMBINATION_USER_AND_IP = True
-AXES_LOCK_OUT_BY_USER_OR_IP = False
-AXES_ONLY_USER_FAILURES = False
-AXES_ONLY_ADMIN_FAILURES = False
+AXES_LOCKOUT_PARAMETERS = ['username', 'ip_address', 'user_agent']
 
 # Django REST Framework Configuration
 REST_FRAMEWORK = {

@@ -1,186 +1,373 @@
 {% extends 'base.html' %}
 
-{% block title %}Wariblo - Connectez-vous avec les Influenceurs Africains{% endblock %}
+{% block title %}Wariblo - La Plateforme de Marketing d'Influence N°1 en Afrique{% endblock %}
 
 {% block content %}
-<!-- Hero Section -->
-<section class="hero-section">
+<!-- Hero Section Premium -->
+<section class="hero-section-premium">
+    <div class="hero-background">
+        <div class="hero-gradient-1"></div>
+        <div class="hero-gradient-2"></div>
+        <div class="hero-particles"></div>
+    </div>
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-6">
-                <h1 class="hero-title">Connectez-vous avec les Meilleurs Influenceurs d'Afrique</h1>
-                <p class="hero-subtitle">Wariblo est la plateforme leader qui connecte les marques avec les créateurs de contenu influents à travers le continent.</p>
-                <div class="hero-buttons">
-                    <a href="{% url 'register' %}" class="btn btn-primary btn-lg">Commencer</a>
-                    <a href="{% url 'campaign_list' %}" class="btn btn-outline btn-lg">Voir les Campagnes</a>
+                <div class="hero-badge">
+                    <span class="badge-icon">🚀</span>
+                    <span class="badge-text">Plateforme N°1 en Afrique</span>
+                </div>
+                <h1 class="hero-title-premium">Transformez Votre Marque avec les Meilleurs Influenceurs Africains</h1>
+                <p class="hero-subtitle-premium">Wariblo connecte 5,000+ influenceurs vérifiés avec 1,200+ marques à travers 54 pays africains. Maximisez votre ROI avec des campagnes ciblées et authentiques.</p>
+                <div class="hero-buttons-premium">
+                    <a href="{% url 'register' %}" class="btn btn-premium-primary">
+                        <span class="btn-text">Démarrer Gratuitement</span>
+                        <span class="btn-icon">→</span>
+                    </a>
+                    <a href="{% url 'campaign_list' %}" class="btn btn-premium-secondary">
+                        <span class="btn-icon">▶</span>
+                        <span class="btn-text">Voir la Démo</span>
+                    </a>
+                </div>
+                <div class="hero-trust">
+                    <div class="trust-item">
+                        <div class="trust-icon">✓</div>
+                        <div class="trust-text">Influenceurs Vérifiés</div>
+                    </div>
+                    <div class="trust-item">
+                        <div class="trust-icon">🔒</div>
+                        <div class="trust-text">Paiements Sécurisés</div>
+                    </div>
+                    <div class="trust-item">
+                        <div class="trust-icon">📊</div>
+                        <div class="trust-text">Analytics Avancés</div>
+                    </div>
                 </div>
             </div>
             <div class="col-lg-6">
-                <div class="hero-illustration">
-                    <div class="illustration-circle"></div>
-                    <div class="illustration-icon">🔥</div>
+                <div class="hero-illustration-premium">
+                    <div class="illustration-card illustration-card-1">
+                        <div class="card-icon">📱</div>
+                        <div class="card-label">Instagram</div>
+                    </div>
+                    <div class="illustration-card illustration-card-2">
+                        <div class="card-icon">🎵</div>
+                        <div class="card-label">TikTok</div>
+                    </div>
+                    <div class="illustration-card illustration-card-3">
+                        <div class="card-icon">▶️</div>
+                        <div class="card-label">YouTube</div>
+                    </div>
+                    <div class="illustration-card illustration-card-4">
+                        <div class="card-icon">🐦</div>
+                        <div class="card-label">Twitter</div>
+                    </div>
+                    <div class="illustration-center">
+                        <div class="center-icon">🔥</div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- Statistiques -->
-<section class="stats-section">
+<!-- Statistiques Premium -->
+<section class="stats-section-premium">
     <div class="container">
+        <div class="stats-header">
+            <h2 class="stats-title">Des Résultats Prouvés</h2>
+            <p class="stats-subtitle">Rejoignez une communauté en croissance rapide</p>
+        </div>
         <div class="row">
             <div class="col-md-3">
-                <div class="stat-card">
-                    <div class="stat-number">5000+</div>
-                    <div class="stat-label">Influenceurs</div>
+                <div class="stat-card-premium">
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-number-premium">5,000+</div>
+                    <div class="stat-label-premium">Influenceurs Vérifiés</div>
+                    <div class="stat-trend">+25% ce mois</div>
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="stat-card">
-                    <div class="stat-number">1200+</div>
-                    <div class="stat-label">Annonceurs</div>
+                <div class="stat-card-premium">
+                    <div class="stat-icon">🏢</div>
+                    <div class="stat-number-premium">1,200+</div>
+                    <div class="stat-label-premium">Marques Confiantes</div>
+                    <div class="stat-trend">+18% ce mois</div>
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="stat-card">
-                    <div class="stat-number">54</div>
-                    <div class="stat-label">Pays Africains</div>
+                <div class="stat-card-premium">
+                    <div class="stat-icon">🌍</div>
+                    <div class="stat-number-premium">54</div>
+                    <div class="stat-label-premium">Pays Africains</div>
+                    <div class="stat-trend">Couverture totale</div>
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="stat-card">
-                    <div class="stat-number">10M+</div>
-                    <div class="stat-label">Audience Totale</div>
+                <div class="stat-card-premium">
+                    <div class="stat-icon">📊</div>
+                    <div class="stat-number-premium">10M+</div>
+                    <div class="stat-label-premium">Audience Totale</div>
+                    <div class="stat-trend">+40% ce mois</div>
                 </div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- Comment ça marche -->
-<section class="how-it-works">
+<!-- Comment ça marche Premium -->
+<section class="how-it-works-premium">
     <div class="container">
-        <h2 class="section-title">Comment ça marche</h2>
+        <div class="section-header-premium">
+            <h2 class="section-title-premium">Comment ça marche</h2>
+            <p class="section-subtitle-premium">Lancez votre première campagne en 3 étapes simples</p>
+        </div>
         <div class="row">
             <div class="col-md-4">
-                <div class="step-card">
-                    <div class="step-number">1</div>
-                    <div class="step-icon">📝</div>
-                    <h3 class="step-title">Inscrivez-vous</h3>
-                    <p class="step-description">Créez votre compte en tant qu'influenceur ou annonceur en quelques secondes</p>
+                <div class="step-card-premium">
+                    <div class="step-number-premium">01</div>
+                    <div class="step-icon-premium">📝</div>
+                    <h3 class="step-title-premium">Créez votre compte</h3>
+                    <p class="step-description-premium">Inscrivez-vous gratuitement en moins de 2 minutes. Choisissez votre rôle et complétez votre profil.</p>
+                    <div class="step-features">
+                        <span class="step-feature">✓ Inscription gratuite</span>
+                        <span class="step-feature">✓ Vérification instantanée</span>
+                    </div>
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="step-card">
-                    <div class="step-number">2</div>
-                    <div class="step-icon">🎯</div>
-                    <h3 class="step-title">Créez ou Parcourez</h3>
-                    <p class="step-description">Les annonceurs créent des campagnes, les influenceurs parcourent les opportunités</p>
+                <div class="step-card-premium">
+                    <div class="step-number-premium">02</div>
+                    <div class="step-icon-premium">🎯</div>
+                    <h3 class="step-title-premium">Trouvez ou créez</h3>
+                    <p class="step-description-premium">Parcourez les campagnes ou créez la vôtre. Notre algorithme de matching trouve les opportunités parfaites.</p>
+                    <div class="step-features">
+                        <span class="step-feature">✓ Matching intelligent</span>
+                        <span class="step-feature">✓ Filtres avancés</span>
+                    </div>
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="step-card">
-                    <div class="step-number">3</div>
-                    <div class="step-icon">🤝</div>
-                    <h3 class="step-title">Collaborez</h3>
-                    <p class="step-description">Postulez, acceptez et commencez à collaborer sur des projets passionnants</p>
+                <div class="step-card-premium">
+                    <div class="step-number-premium">03</div>
+                    <div class="step-icon-premium">🤝</div>
+                    <h3 class="step-title-premium">Collaborez et gagnez</h3>
+                    <p class="step-description-premium">Postulez, négociez et lancez vos campagnes. Suivez les performances en temps réel.</p>
+                    <div class="step-features">
+                        <span class="step-feature">✓ Paiements sécurisés</span>
+                        <span class="step-feature">✓ Analytics détaillés</span>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- Pour les Influenceurs -->
-<section class="feature-section">
+<!-- Pour les Influenceurs Premium -->
+<section class="feature-section-premium">
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-6">
-                <h2 class="feature-title">Pour les Influenceurs</h2>
-                <ul class="feature-list">
-                    <li>✨ Accès à des campagnes de marques prestigieuses</li>
-                    <li>💰 Tarification transparente et paiements sécurisés</li>
-                    <li>📊 Analytics détaillés pour suivre vos performances</li>
-                    <li>🌍 Opportunités pan-africaines</li>
-                    <li>💬 Communication directe avec les annonceurs</li>
-                </ul>
-                <a href="{% url 'register' %}?role=influencer" class="btn btn-primary">Devenir Influenceur</a>
+                <div class="feature-content-premium">
+                    <div class="feature-badge">
+                        <span class="badge-icon">🌟</span>
+                        <span class="badge-text">Pour les Créateurs</span>
+                    </div>
+                    <h2 class="feature-title-premium">Monétisez Votre Contenu</h2>
+                    <p class="feature-subtitle-premium">Connectez-vous avec des marques prestigieuses et transformez votre passion en revenus.</p>
+                    <div class="feature-grid-premium">
+                        <div class="feature-item-premium">
+                            <div class="feature-item-icon">💎</div>
+                            <div class="feature-item-content">
+                                <h4>Campagnes Premium</h4>
+                                <p>Accès exclusif aux marques Fortune 500</p>
+                            </div>
+                        </div>
+                        <div class="feature-item-premium">
+                            <div class="feature-item-icon">💰</div>
+                            <div class="feature-item-content">
+                                <h4>Paiements Garantis</h4>
+                                <p>Revenus sécurisés et transparents</p>
+                            </div>
+                        </div>
+                        <div class="feature-item-premium">
+                            <div class="feature-item-icon">📊</div>
+                            <div class="feature-item-content">
+                                <h4>Analytics Pro</h4>
+                                <p>Suivez vos performances en temps réel</p>
+                            </div>
+                        </div>
+                        <div class="feature-item-premium">
+                            <div class="feature-item-icon">🌍</div>
+                            <div class="feature-item-content">
+                                <h4>Opportunités Pan-Africaines</h4>
+                                <p>Travaillez avec des marques du monde entier</p>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="{% url 'register' %}?role=influencer" class="btn btn-premium-primary">Commencer Gratuitement</a>
+                </div>
             </div>
             <div class="col-lg-6">
-                <div class="feature-illustration">
-                    <div class="feature-icon">📱</div>
+                <div class="feature-illustration-premium">
+                    <div class="illustration-stats">
+                        <div class="stat-item">
+                            <div class="stat-value">+300%</div>
+                            <div class="stat-label">Revenus moyens</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">95%</div>
+                            <div class="stat-label">Satisfaction</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- Pour les Annonceurs -->
-<section class="feature-section feature-section-alt">
+<!-- Pour les Annonceurs Premium -->
+<section class="feature-section-premium feature-section-premium-alt">
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-6 order-lg-2">
-                <h2 class="feature-title">Pour les Annonceurs</h2>
-                <ul class="feature-list">
-                    <li>🎯 Accès à des influenceurs vérifiés et authentiques</li>
-                    <li>📈 Maximisez votre ROI avec des campagnes ciblées</li>
-                    <li>🌐 Atteignez des audiences dans toute l'Afrique</li>
-                    <li>⚡ Gestion simplifiée des campagnes</li>
-                    <li>🔒 Sécurité et transparence garanties</li>
-                </ul>
-                <a href="{% url 'register' %}?role=advertiser" class="btn btn-primary">Devenir Annonceur</a>
+                <div class="feature-content-premium">
+                    <div class="feature-badge">
+                        <span class="badge-icon">🚀</span>
+                        <span class="badge-text">Pour les Marques</span>
+                    </div>
+                    <h2 class="feature-title-premium">Maximisez Votre ROI</h2>
+                    <p class="feature-subtitle-premium">Atteignez votre audience cible avec des influenceurs authentiques et engageants.</p>
+                    <div class="feature-grid-premium">
+                        <div class="feature-item-premium">
+                            <div class="feature-item-icon">🎯</div>
+                            <div class="feature-item-content">
+                                <h4>Influenceurs Vérifiés</h4>
+                                <p>Profils authentiques et metrics réels</p>
+                            </div>
+                        </div>
+                        <div class="feature-item-premium">
+                            <div class="feature-item-icon">📈</div>
+                            <div class="feature-item-content">
+                                <h4>ROI Optimisé</h4>
+                                <p>Campagnes ciblées pour maximiser les résultats</p>
+                            </div>
+                        </div>
+                        <div class="feature-item-premium">
+                            <div class="feature-item-icon">🌐</div>
+                            <div class="feature-item-content">
+                                <h4>Couverture Africaine</h4>
+                                <p>Atteignez 54 pays avec une seule campagne</p>
+                            </div>
+                        </div>
+                        <div class="feature-item-premium">
+                            <div class="feature-item-icon">⚡</div>
+                            <div class="feature-item-content">
+                                <h4>Gestion Simplifiée</h4>
+                                <p>Tableau de bord intuitif et automatisé</p>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="{% url 'register' %}?role=advertiser" class="btn btn-premium-primary">Lancer une Campagne</a>
+                </div>
             </div>
             <div class="col-lg-6 order-lg-1">
-                <div class="feature-illustration">
-                    <div class="feature-icon">🚀</div>
+                <div class="feature-illustration-premium">
+                    <div class="illustration-stats">
+                        <div class="stat-item">
+                            <div class="stat-value">+250%</div>
+                            <div class="stat-label">ROI moyen</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">98%</div>
+                            <div class="stat-label">Taux de réussite</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- Témoignages -->
-<section class="testimonials-section">
+<!-- Témoignages Premium -->
+<section class="testimonials-section-premium">
     <div class="container">
-        <h2 class="section-title">Ce que disent nos utilisateurs</h2>
+        <div class="section-header-premium">
+            <h2 class="section-title-premium">Ils Nous Font Confiance</h2>
+            <p class="section-subtitle-premium">Découvrez pourquoi des milliers d'utilisateurs choisissent Wariblo</p>
+        </div>
         <div class="row">
             <div class="col-md-4">
-                <div class="testimonial-card">
-                    <div class="testimonial-content">
-                        <p class="testimonial-text">"Wariblo m'a permis de collaborer avec des marques incroyables à travers l'Afrique. La plateforme est intuitive et les opportunités sont nombreuses."</p>
+                <div class="testimonial-card-premium">
+                    <div class="testimonial-header">
+                        <div class="testimonial-rating">
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                        </div>
+                        <div class="testimonial-verified">✓ Vérifié</div>
                     </div>
-                    <div class="testimonial-author">
-                        <div class="author-avatar">👩</div>
-                        <div class="author-info">
-                            <div class="author-name">Amara Diallo</div>
-                            <div class="author-role">Influenceur, Sénégal</div>
+                    <div class="testimonial-content-premium">
+                        <p class="testimonial-text-premium">"Wariblo m'a permis de collaborer avec des marques incroyables à travers l'Afrique. La plateforme est intuitive et les opportunités sont nombreuses. J'ai augmenté mes revenus de 300% en 6 mois."</p>
+                    </div>
+                    <div class="testimonial-author-premium">
+                        <div class="author-avatar-premium">👩</div>
+                        <div class="author-info-premium">
+                            <div class="author-name-premium">Amara Diallo</div>
+                            <div class="author-role-premium">Influenceur Fashion, Sénégal</div>
+                            <div class="author-stats">125K followers</div>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="testimonial-card">
-                    <div class="testimonial-content">
-                        <p class="testimonial-text">"Grâce à Wariblo, nous avons trouvé des influenceurs parfaits pour nos campagnes. Le ROI a augmenté de 300% depuis notre inscription."</p>
+                <div class="testimonial-card-premium">
+                    <div class="testimonial-header">
+                        <div class="testimonial-rating">
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                        </div>
+                        <div class="testimonial-verified">✓ Vérifié</div>
                     </div>
-                    <div class="testimonial-author">
-                        <div class="author-avatar">👨</div>
-                        <div class="author-info">
-                            <div class="author-name">Kofi Mensah</div>
-                            <div class="author-role">Marketing Manager, Ghana</div>
+                    <div class="testimonial-content-premium">
+                        <p class="testimonial-text-premium">"Grâce à Wariblo, nous avons trouvé des influenceurs parfaits pour nos campagnes. Le ROI a augmenté de 300% depuis notre inscription. L'équipe support est également exceptionnelle."</p>
+                    </div>
+                    <div class="testimonial-author-premium">
+                        <div class="author-avatar-premium">👨</div>
+                        <div class="author-info-premium">
+                            <div class="author-name-premium">Kofi Mensah</div>
+                            <div class="author-role-premium">Marketing Manager, Ghana</div>
+                            <div class="author-stats">Tech Startup</div>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="testimonial-card">
-                    <div class="testimonial-content">
-                        <p class="testimonial-text">"La meilleure plateforme pour les créateurs africains. J'ai pu monétiser mon contenu tout en travaillant avec des marques que j'adore."</p>
+                <div class="testimonial-card-premium">
+                    <div class="testimonial-header">
+                        <div class="testimonial-rating">
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                        </div>
+                        <div class="testimonial-verified">✓ Vérifié</div>
                     </div>
-                    <div class="testimonial-author">
-                        <div class="author-avatar">👩</div>
-                        <div class="author-info">
-                            <div class="author-name">Fatou Ndiaye</div>
-                            <div class="author-role">Créatrice de contenu, Côte d'Ivoire</div>
+                    <div class="testimonial-content-premium">
+                        <p class="testimonial-text-premium">"La meilleure plateforme pour les créateurs africains. J'ai pu monétiser mon contenu tout en travaillant avec des marques que j'adore. Le processus de paiement est transparent et rapide."</p>
+                    </div>
+                    <div class="testimonial-author-premium">
+                        <div class="author-avatar-premium">👩</div>
+                        <div class="author-info-premium">
+                            <div class="author-name-premium">Fatou Ndiaye</div>
+                            <div class="author-role-premium">Créatrice Lifestyle, Côte d'Ivoire</div>
+                            <div class="author-stats">89K followers</div>
                         </div>
                     </div>
                 </div>
@@ -189,14 +376,159 @@
     </div>
 </section>
 
-<!-- CTA Section -->
-<section class="cta-section">
-    <div class="container text-center">
-        <h2 class="cta-title">Prêt à commencer?</h2>
-        <p class="cta-subtitle">Rejoignez des milliers d'influenceurs et d'annonceurs sur Wariblo</p>
-        <div class="cta-buttons">
-            <a href="{% url 'register' %}" class="btn btn-primary btn-lg">Créer un compte gratuit</a>
-            <a href="{% url 'about' %}" class="btn btn-outline btn-lg">En savoir plus</a>
+<!-- Pricing Premium -->
+<section class="pricing-section-premium">
+    <div class="container">
+        <div class="section-header-premium">
+            <h2 class="section-title-premium">Plans Tarifaires Simples</h2>
+            <p class="section-subtitle-premium">Choisissez le plan qui correspond à vos besoins</p>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="pricing-card-premium pricing-card-free">
+                    <div class="pricing-header">
+                        <div class="pricing-badge">Gratuit</div>
+                        <h3 class="pricing-title">Starter</h3>
+                        <div class="pricing-price">
+                            <span class="price-value">0€</span>
+                            <span class="price-period">/mois</span>
+                        </div>
+                    </div>
+                    <div class="pricing-features">
+                        <div class="pricing-feature">
+                            <span class="feature-icon">✓</span>
+                            <span>3 campagnes/mois</span>
+                        </div>
+                        <div class="pricing-feature">
+                            <span class="feature-icon">✓</span>
+                            <span>10 candidatures/mois</span>
+                        </div>
+                        <div class="pricing-feature">
+                            <span class="feature-icon">✓</span>
+                            <span>50 messages/mois</span>
+                        </div>
+                        <div class="pricing-feature">
+                            <span class="feature-icon">✓</span>
+                            <span>Analytics basiques</span>
+                        </div>
+                        <div class="pricing-feature">
+                            <span class="feature-icon">✓</span>
+                            <span>Commission 20%</span>
+                        </div>
+                    </div>
+                    <a href="{% url 'register' %}" class="btn btn-premium-outline">Commencer Gratuitement</a>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="pricing-card-premium pricing-card-pro">
+                    <div class="pricing-badge-popular">⭐ Populaire</div>
+                    <div class="pricing-header">
+                        <h3 class="pricing-title">Pro</h3>
+                        <div class="pricing-price">
+                            <span class="price-value">29€</span>
+                            <span class="price-period">/mois</span>
+                        </div>
+                    </div>
+                    <div class="pricing-features">
+                        <div class="pricing-feature">
+                            <span class="feature-icon">✓</span>
+                            <span>15 campagnes/mois</span>
+                        </div>
+                        <div class="pricing-feature">
+                            <span class="feature-icon">✓</span>
+                            <span>50 candidatures/mois</span>
+                        </div>
+                        <div class="pricing-feature">
+                            <span class="feature-icon">✓</span>
+                            <span>150 messages/mois</span>
+                        </div>
+                        <div class="pricing-feature">
+                            <span class="feature-icon">✓</span>
+                            <span>Analytics avancés</span>
+                        </div>
+                        <div class="pricing-feature">
+                            <span class="feature-icon">✓</span>
+                            <span>Badge vérifié</span>
+                        </div>
+                        <div class="pricing-feature">
+                            <span class="feature-icon">✓</span>
+                            <span>Commission 15%</span>
+                        </div>
+                    </div>
+                    <a href="{% url 'billing:pricing_plans' %}" class="btn btn-premium-primary">Choisir Pro</a>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="pricing-card-premium pricing-card-enterprise">
+                    <div class="pricing-header">
+                        <div class="pricing-badge">Enterprise</div>
+                        <h3 class="pricing-title">Business</h3>
+                        <div class="pricing-price">
+                            <span class="price-value">99€</span>
+                            <span class="price-period">/mois</span>
+                        </div>
+                    </div>
+                    <div class="pricing-features">
+                        <div class="pricing-feature">
+                            <span class="feature-icon">✓</span>
+                            <span>Campagnes illimitées</span>
+                        </div>
+                        <div class="pricing-feature">
+                            <span class="feature-icon">✓</span>
+                            <span>Candidatures illimitées</span>
+                        </div>
+                        <div class="pricing-feature">
+                            <span class="feature-icon">✓</span>
+                            <span>Messages illimités</span>
+                        </div>
+                        <div class="pricing-feature">
+                            <span class="feature-icon">✓</span>
+                            <span>Support prioritaire</span>
+                        </div>
+                        <div class="pricing-feature">
+                            <span class="feature-icon">✓</span>
+                            <span>API dédiée</span>
+                        </div>
+                        <div class="pricing-feature">
+                            <span class="feature-icon">✓</span>
+                            <span>Commission 10%</span>
+                        </div>
+                    </div>
+                    <a href="{% url 'billing:pricing_plans' %}" class="btn btn-premium-primary">Choisir Business</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section Premium -->
+<section class="cta-section-premium">
+    <div class="cta-background">
+        <div class="cta-gradient-1"></div>
+        <div class="cta-gradient-2"></div>
+    </div>
+    <div class="container">
+        <div class="cta-content-premium">
+            <div class="cta-badge-premium">
+                <span class="badge-icon">🎉</span>
+                <span class="badge-text">Offre Limitée</span>
+            </div>
+            <h2 class="cta-title-premium">Prêt à Transformer Votre Marque?</h2>
+            <p class="cta-subtitle-premium">Rejoignez 5,000+ influenceurs et 1,200+ marques sur Wariblo. Commencez gratuitement et voyez les résultats dès aujourd'hui.</p>
+            <div class="cta-buttons-premium">
+                <a href="{% url 'register' %}" class="btn btn-premium-primary btn-lg">
+                    <span class="btn-text">Créer un compte gratuit</span>
+                    <span class="btn-icon">→</span>
+                </a>
+                <a href="{% url 'about' %}" class="btn btn-premium-secondary btn-lg">
+                    <span class="btn-icon">ℹ</span>
+                    <span class="btn-text">En savoir plus</span>
+                </a>
+            </div>
+            <div class="cta-guarantee">
+                <div class="guarantee-icon">🛡️</div>
+                <div class="guarantee-text">30 jours satisfait ou remboursé</div>
+            </div>
         </div>
     </div>
 </section>
@@ -204,24 +536,65 @@
 
 {% block extra_css %}
 <style>
-/* Hero Section */
-.hero-section {
-    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-    color: white;
-    padding: 5rem 0;
+/* Variables Premium */
+:root {
+    --premium-primary: #E63900;
+    --premium-secondary: #FFC107;
+    --premium-accent: #C71585;
+    --premium-dark: #1a1a2e;
+    --premium-light: #f8f9fa;
+    --premium-gradient: linear-gradient(135deg, #E63900, #C71585);
+    --premium-shadow: 0 10px 40px rgba(230, 57, 0, 0.15);
+    --premium-shadow-lg: 0 20px 60px rgba(230, 57, 0, 0.25);
+}
+
+/* Hero Section Premium */
+.hero-section-premium {
+    padding: 6rem 0;
     position: relative;
+    overflow: hidden;
+    background: var(--premium-dark);
+    color: white;
+}
+
+.hero-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     overflow: hidden;
 }
 
-.hero-section::before {
-    content: '';
+.hero-gradient-1 {
     position: absolute;
     top: -50%;
     right: -20%;
     width: 60%;
     height: 200%;
-    background: radial-gradient(circle, rgba(255, 215, 0, 0.1) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(230, 57, 0, 0.3) 0%, transparent 70%);
     animation: float 20s ease-in-out infinite;
+}
+
+.hero-gradient-2 {
+    position: absolute;
+    bottom: -50%;
+    left: -20%;
+    width: 60%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(199, 21, 133, 0.2) 0%, transparent 70%);
+    animation: float 25s ease-in-out infinite reverse;
+}
+
+.hero-particles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+    background-size: 50px 50px;
+    opacity: 0.3;
 }
 
 @keyframes float {
@@ -229,40 +602,207 @@
     50% { transform: translateY(-50px) rotate(180deg); }
 }
 
-.hero-title {
-    font-size: 3rem;
+.hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    margin-bottom: 1.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.badge-icon {
+    font-size: 1.2rem;
+}
+
+.badge-text {
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.hero-title-premium {
+    font-size: 3.5rem;
     font-weight: 800;
     margin-bottom: 1.5rem;
     line-height: 1.2;
+    background: linear-gradient(135deg, #ffffff, #FFC107);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
-.hero-subtitle {
+.hero-subtitle-premium {
     font-size: 1.25rem;
     margin-bottom: 2rem;
-    opacity: 0.95;
+    opacity: 0.9;
+    line-height: 1.8;
 }
 
-.hero-buttons {
+.hero-buttons-premium {
     display: flex;
     gap: 1rem;
     flex-wrap: wrap;
+    margin-bottom: 2rem;
 }
 
-.hero-illustration {
+.btn-premium-primary {
+    background: linear-gradient(135deg, var(--premium-primary), var(--premium-accent));
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    border: none;
+    box-shadow: var(--premium-shadow);
+}
+
+.btn-premium-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--premium-shadow-lg);
+}
+
+.btn-premium-secondary {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(10px);
+}
+
+.btn-premium-secondary:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+.btn-premium-outline {
+    background: transparent;
+    color: var(--premium-primary);
+    padding: 1rem 2rem;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    border: 2px solid var(--premium-primary);
+}
+
+.btn-premium-outline:hover {
+    background: var(--premium-primary);
+    color: white;
+}
+
+.hero-trust {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+.trust-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.trust-icon {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+}
+
+.hero-illustration-premium {
     position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 400px;
+    min-height: 500px;
 }
 
-.illustration-circle {
-    width: 300px;
-    height: 300px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.05));
+.illustration-card {
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(10px);
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    animation: float 6s ease-in-out infinite;
+}
+
+.illustration-card-1 {
+    top: 10%;
+    left: 10%;
+    animation-delay: 0s;
+}
+
+.illustration-card-2 {
+    top: 20%;
+    right: 10%;
+    animation-delay: 1s;
+}
+
+.illustration-card-3 {
+    bottom: 20%;
+    left: 20%;
+    animation-delay: 2s;
+}
+
+.illustration-card-4 {
+    bottom: 10%;
+    right: 20%;
+    animation-delay: 3s;
+}
+
+.card-icon {
+    font-size: 2rem;
+}
+
+.card-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.illustration-center {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(230, 57, 0, 0.3), rgba(199, 21, 133, 0.3));
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid rgba(255, 255, 255, 0.2);
     animation: pulse 3s ease-in-out infinite;
+}
+
+.center-icon {
+    font-size: 5rem;
 }
 
 @keyframes pulse {
@@ -270,32 +810,279 @@
     50% { transform: scale(1.05); }
 }
 
-.illustration-icon {
-    position: absolute;
-    font-size: 8rem;
-    animation: bounce 2s ease-in-out infinite;
+/* Stats Section Premium */
+.stats-section-premium {
+    padding: 5rem 0;
+    background: var(--premium-light);
 }
 
-@keyframes bounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-20px); }
-}
-
-/* Stats Section */
-.stats-section {
-    padding: 4rem 0;
-    background: var(--bg-white);
-}
-
-.stat-card {
+.stats-header {
     text-align: center;
+    margin-bottom: 3rem;
+}
+
+.stats-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    background: var(--premium-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.stats-subtitle {
+    font-size: 1.1rem;
+    color: var(--text-muted);
+}
+
+.stat-card-premium {
+    background: white;
+    padding: 2rem;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: var(--premium-shadow);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card-premium::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--premium-gradient);
+}
+
+.stat-card-premium:hover {
+    transform: translateY(-10px);
+    box-shadow: var(--premium-shadow-lg);
+}
+
+.stat-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.stat-number-premium {
+    font-size: 2.5rem;
+    font-weight: 800;
+    background: var(--premium-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 0.5rem;
+}
+
+.stat-label-premium {
+    font-size: 1.1rem;
+    color: var(--text-dark);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.stat-trend {
+    font-size: 0.9rem;
+    color: var(--premium-primary);
+    font-weight: 600;
+}
+
+/* How It Works Premium */
+.how-it-works-premium {
+    padding: 5rem 0;
+    background: white;
+}
+
+.section-header-premium {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.section-title-premium {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    background: var(--premium-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.section-subtitle-premium {
+    font-size: 1.1rem;
+    color: var(--text-muted);
+}
+
+.step-card-premium {
+    background: var(--premium-light);
+    padding: 2rem;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: var(--premium-shadow);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.step-card-premium::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--premium-gradient);
+}
+
+.step-card-premium:hover {
+    transform: translateY(-10px);
+    box-shadow: var(--premium-shadow-lg);
+}
+
+.step-number-premium {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--premium-gradient);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1rem;
+}
+
+.step-icon-premium {
+    font-size: 3rem;
+    margin-bottom: 1.5rem;
+}
+
+.step-title-premium {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--text-dark);
+}
+
+.step-description-premium {
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+}
+
+.step-features {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.step-feature {
+    font-size: 0.9rem;
+    color: var(--premium-primary);
+    font-weight: 600;
+}
+
+/* Feature Section Premium */
+.feature-section-premium {
+    padding: 5rem 0;
+    background: white;
+}
+
+.feature-section-premium-alt {
+    background: var(--premium-light);
+}
+
+.feature-content-premium {
     padding: 2rem;
 }
 
-.stat-number {
-    font-size: 3rem;
+.feature-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(230, 57, 0, 0.1);
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    margin-bottom: 1.5rem;
+}
+
+.feature-title-premium {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    background: var(--premium-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.feature-subtitle-premium {
+    font-size: 1.1rem;
+    color: var(--text-muted);
+    margin-bottom: 2rem;
+    line-height: 1.6;
+}
+
+.feature-grid-premium {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.feature-item-premium {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+}
+
+.feature-item-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.feature-item-content h4 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+    color: var(--text-dark);
+}
+
+.feature-item-content p {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+.feature-illustration-premium {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 400px;
+}
+
+.illustration-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+.stat-item {
+    background: var(--premium-light);
+    padding: 2rem;
+    border-radius: 20px;
+    text-align: center;
+}
+
+.stat-value {
+    font-size: 2.5rem;
     font-weight: 800;
-    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    background: var(--premium-gradient);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -303,274 +1090,378 @@
 }
 
 .stat-label {
-    font-size: 1.1rem;
+    font-size: 1rem;
     color: var(--text-muted);
-    font-weight: 500;
+    font-weight: 600;
 }
 
-/* How It Works */
-.how-it-works {
+/* Testimonials Premium */
+.testimonials-section-premium {
     padding: 5rem 0;
-    background: var(--bg-light);
+    background: var(--premium-light);
 }
 
-.section-title {
-    text-align: center;
-    font-size: 2.5rem;
-    font-weight: 700;
-    margin-bottom: 3rem;
-    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
-.step-card {
-    background: var(--bg-white);
+.testimonial-card-premium {
+    background: white;
     padding: 2rem;
-    border-radius: var(--border-radius-lg);
-    text-align: center;
-    box-shadow: var(--shadow);
+    border-radius: 20px;
+    box-shadow: var(--premium-shadow);
     transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
+    height: 100%;
 }
 
-.step-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
-}
-
-.step-card:hover {
+.testimonial-card-premium:hover {
     transform: translateY(-10px);
-    box-shadow: var(--shadow-lg);
+    box-shadow: var(--premium-shadow-lg);
 }
 
-.step-number {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-    color: white;
+.testimonial-header {
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    justify-content: center;
-    font-weight: 700;
+    margin-bottom: 1.5rem;
+}
+
+.testimonial-rating {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.star {
+    color: var(--premium-secondary);
     font-size: 1.2rem;
 }
 
-.step-icon {
-    font-size: 4rem;
+.testimonial-verified {
+    background: rgba(76, 175, 80, 0.1);
+    color: #4CAF50;
+    padding: 0.25rem 0.75rem;
+    border-radius: 50px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.testimonial-content-premium {
     margin-bottom: 1.5rem;
 }
 
-.step-title {
-    font-size: 1.5rem;
-    font-weight: 700;
-    margin-bottom: 1rem;
-    color: var(--text-dark);
-}
-
-.step-description {
-    color: var(--text-muted);
-    line-height: 1.6;
-}
-
-/* Feature Section */
-.feature-section {
-    padding: 5rem 0;
-    background: var(--bg-white);
-}
-
-.feature-section-alt {
-    background: var(--bg-light);
-}
-
-.feature-title {
-    font-size: 2.5rem;
-    font-weight: 700;
-    margin-bottom: 2rem;
-    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
-.feature-list {
-    list-style: none;
-    padding: 0;
-    margin-bottom: 2rem;
-}
-
-.feature-list li {
-    padding: 1rem 0;
-    font-size: 1.1rem;
-    color: var(--text-dark);
-    border-bottom: 1px solid var(--border-color);
-}
-
-.feature-list li:last-child {
-    border-bottom: none;
-}
-
-.feature-illustration {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 300px;
-}
-
-.feature-icon {
-    font-size: 10rem;
-    animation: float 6s ease-in-out infinite;
-}
-
-/* Testimonials */
-.testimonials-section {
-    padding: 5rem 0;
-    background: var(--bg-white);
-}
-
-.testimonial-card {
-    background: var(--bg-white);
-    padding: 2rem;
-    border-radius: var(--border-radius-lg);
-    box-shadow: var(--shadow);
-    height: 100%;
-    transition: all 0.3s ease;
-}
-
-.testimonial-card:hover {
-    transform: translateY(-5px);
-    box-shadow: var(--shadow-lg);
-}
-
-.testimonial-content {
-    margin-bottom: 1.5rem;
-}
-
-.testimonial-text {
+.testimonial-text-premium {
     font-style: italic;
     color: var(--text-muted);
     line-height: 1.8;
     font-size: 1rem;
 }
 
-.testimonial-author {
+.testimonial-author-premium {
     display: flex;
     align-items: center;
     gap: 1rem;
 }
 
-.author-avatar {
+.author-avatar-premium {
     width: 60px;
     height: 60px;
     border-radius: 50%;
-    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    background: var(--premium-gradient);
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 2rem;
 }
 
-.author-name {
+.author-info-premium {
+    flex: 1;
+}
+
+.author-name-premium {
     font-weight: 700;
     color: var(--text-dark);
+    margin-bottom: 0.25rem;
 }
 
-.author-role {
+.author-role-premium {
     font-size: 0.9rem;
     color: var(--text-muted);
+    margin-bottom: 0.25rem;
 }
 
-/* CTA Section */
-.cta-section {
-    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-    color: white;
+.author-stats {
+    font-size: 0.8rem;
+    color: var(--premium-primary);
+    font-weight: 600;
+}
+
+/* Pricing Premium */
+.pricing-section-premium {
     padding: 5rem 0;
+    background: white;
 }
 
-.cta-title {
-    font-size: 2.5rem;
-    font-weight: 800;
+.pricing-card-premium {
+    background: var(--premium-light);
+    padding: 2rem;
+    border-radius: 20px;
+    box-shadow: var(--premium-shadow);
+    transition: all 0.3s ease;
+    position: relative;
+    height: 100%;
+}
+
+.pricing-card-premium:hover {
+    transform: translateY(-10px);
+    box-shadow: var(--premium-shadow-lg);
+}
+
+.pricing-card-pro {
+    background: white;
+    border: 2px solid var(--premium-primary);
+    transform: scale(1.05);
+}
+
+.pricing-card-pro:hover {
+    transform: scale(1.05) translateY(-10px);
+}
+
+.pricing-badge-popular {
+    position: absolute;
+    top: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--premium-gradient);
+    color: white;
+    padding: 0.5rem 1.5rem;
+    border-radius: 50px;
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+.pricing-badge {
+    background: var(--premium-gradient);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: inline-block;
     margin-bottom: 1rem;
 }
 
-.cta-subtitle {
-    font-size: 1.25rem;
+.pricing-header {
+    text-align: center;
     margin-bottom: 2rem;
-    opacity: 0.95;
 }
 
-.cta-buttons {
+.pricing-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--text-dark);
+}
+
+.pricing-price {
+    margin-bottom: 1rem;
+}
+
+.price-value {
+    font-size: 3rem;
+    font-weight: 800;
+    background: var(--premium-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.price-period {
+    font-size: 1rem;
+    color: var(--text-muted);
+}
+
+.pricing-features {
+    margin-bottom: 2rem;
+}
+
+.pricing-feature {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.pricing-feature:last-child {
+    border-bottom: none;
+}
+
+.feature-icon {
+    color: var(--premium-primary);
+    font-weight: 700;
+}
+
+/* CTA Section Premium */
+.cta-section-premium {
+    padding: 5rem 0;
+    position: relative;
+    overflow: hidden;
+    background: var(--premium-dark);
+    color: white;
+}
+
+.cta-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+}
+
+.cta-gradient-1 {
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 60%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(230, 57, 0, 0.3) 0%, transparent 70%);
+    animation: float 20s ease-in-out infinite;
+}
+
+.cta-gradient-2 {
+    position: absolute;
+    bottom: -50%;
+    left: -20%;
+    width: 60%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(199, 21, 133, 0.2) 0%, transparent 70%);
+    animation: float 25s ease-in-out infinite reverse;
+}
+
+.cta-content-premium {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+}
+
+.cta-badge-premium {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    margin-bottom: 1.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.cta-title-premium {
+    font-size: 3rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, #ffffff, #FFC107);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.cta-subtitle-premium {
+    font-size: 1.25rem;
+    margin-bottom: 2rem;
+    opacity: 0.9;
+    line-height: 1.6;
+}
+
+.cta-buttons-premium {
     display: flex;
     gap: 1rem;
     justify-content: center;
     flex-wrap: wrap;
+    margin-bottom: 2rem;
 }
 
-.cta-buttons .btn-outline {
-    border-color: white;
-    color: white;
+.cta-guarantee {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(76, 175, 80, 0.1);
+    padding: 0.75rem 1.5rem;
+    border-radius: 50px;
+    border: 1px solid rgba(76, 175, 80, 0.3);
 }
 
-.cta-buttons .btn-outline:hover {
-    background: white;
-    color: var(--primary-color);
+.guarantee-icon {
+    font-size: 1.2rem;
+}
+
+.guarantee-text {
+    font-size: 0.9rem;
+    font-weight: 600;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
-    .hero-title {
+    .hero-title-premium {
         font-size: 2rem;
     }
     
-    .hero-subtitle {
+    .hero-subtitle-premium {
         font-size: 1rem;
     }
     
-    .hero-illustration {
-        min-height: 250px;
+    .hero-illustration-premium {
+        min-height: 300px;
     }
     
-    .illustration-circle {
-        width: 200px;
-        height: 200px;
+    .illustration-card {
+        width: 80px;
+        height: 80px;
     }
     
-    .illustration-icon {
-        font-size: 5rem;
+    .card-icon {
+        font-size: 1.5rem;
     }
     
-    .stat-number {
+    .card-label {
+        font-size: 0.7rem;
+    }
+    
+    .illustration-center {
+        width: 150px;
+        height: 150px;
+    }
+    
+    .center-icon {
+        font-size: 3rem;
+    }
+    
+    .stat-number-premium {
         font-size: 2rem;
     }
     
-    .section-title {
+    .section-title-premium {
         font-size: 1.75rem;
     }
     
-    .feature-title {
+    .feature-title-premium {
         font-size: 1.75rem;
     }
     
-    .feature-icon {
-        font-size: 6rem;
+    .feature-grid-premium {
+        grid-template-columns: 1fr;
     }
     
-    .cta-title {
+    .pricing-card-pro {
+        transform: none;
+    }
+    
+    .pricing-card-pro:hover {
+        transform: translateY(-10px);
+    }
+    
+    .cta-title-premium {
         font-size: 1.75rem;
     }
     
-    .cta-subtitle {
+    .cta-subtitle-premium {
         font-size: 1rem;
     }
 }

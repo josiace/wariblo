@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+
+{% block title %}Abonnement réussi - Wariblo{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body text-center">
+                    <div class="success-icon mb-4">✅</div>
+                    <h2 class="mb-3">Abonnement réussi!</h2>
+                    <p class="text-muted mb-4">Félicitations! Vous êtes maintenant abonné au plan <strong>{{ subscription.plan.name }}</strong>.</p>
+                    
+                    <div class="subscription-details mb-4">
+                        <div class="detail-item">
+                            <span class="detail-label">Plan:</span>
+                            <span class="detail-value">{{ subscription.plan.name }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Date de début:</span>
+                            <span class="detail-value">{{ subscription.start_date|date:"d/m/Y" }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Date de fin:</span>
+                            <span class="detail-value">{{ subscription.end_date|date:"d/m/Y" }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Prix:</span>
+                            <span class="detail-value">{{ subscription.plan.price }} {{ subscription.plan.currency.symbol|default:default_currency_symbol }}/mois</span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <a href="{% url 'dashboard' %}" class="btn btn-primary">Aller au tableau de bord</a>
+                        <a href="{% url 'my_subscription' %}" class="btn btn-outline">Gérer mon abonnement</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.success-icon {
+    font-size: 4rem;
+    color: var(--success-color);
+}
+
+.subscription-details {
+    background: var(--bg-light);
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    text-align: left;
+}
+
+.detail-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.detail-item:last-child {
+    border-bottom: none;
+}
+
+.detail-label {
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+.detail-value {
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+.form-actions {
+    display: flex;
+    gap: var(--spacing-md);
+    justify-content: center;
+}
+</style>
+{% endblock %}

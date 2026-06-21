@@ -4,9 +4,30 @@
 {% block title %}{{ campaign.title }} - Wariblo{% endblock %}
 
 {% block content %}
+{% include 'breadcrumb.html' with breadcrumbs=breadcrumbs %}
 <div class="container py-5">
     <div class="row">
         <div class="col-md-8">
+            <!-- Score de matching pour influenceurs -->
+            {% if user.is_authenticated and user.is_influencer and match_score > 0 %}
+            <div class="matching-indicator mb-4">
+                <div class="matching-header">
+                    <div class="score-circle">
+                        <span class="score">{{ match_score }}%</span>
+                    </div>
+                    <div class="matching-text">
+                        <h4>Cette campagne correspond à votre profil</h4>
+                        <p>Score de compatibilité basé sur votre niche, vos plateformes et le budget</p>
+                    </div>
+                </div>
+                <div class="matching-details">
+                    {% for detail in match_details %}
+                    <div class="detail-item">{{ detail }}</div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+            
             <div class="card mb-4">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-start mb-3">
@@ -52,10 +73,52 @@
                     {% if campaign.advertiser.logo %}
                         <img src="{{ campaign.advertiser.logo.url }}" class="img-fluid mb-2" width="100">
                     {% endif %}
+                    
+                    <!-- Réputation de l'annonceur -->
+                    <div class="advertiser-reputation mt-3">
+                        <div class="reputation-header">
+                            <h6>📊 Réputation</h6>
+                        </div>
+                        <div class="reputation-stats">
+                            <div class="stat-item">
+                                <span class="stat-label">Campagnes</span>
+                                <span class="stat-value">{{ campaign.advertiser.campaigns.count }}</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Réponse</span>
+                                <span class="stat-value">~85%</span>
+                            </div>
+                        </div>
+                        <div class="reputation-badge">
+                            <span class="badge-icon">✓</span>
+                            <span class="badge-text">Annonceur vérifié</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
+
+<!-- Bouton CTA Sticky -->
+<div class="sticky-cta">
+    {% if user.is_authenticated and user.is_influencer %}
+        {% if has_applied %}
+            <button class="btn btn-secondary" disabled>✓ Vous avez déjà postulé</button>
+        {% elif campaign.is_open %}
+            <a href="{% url 'application_create' campaign.pk %}" class="btn btn-primary">🎯 Postuler à la campagne</a>
+        {% else %}
+            <button class="btn btn-secondary" disabled>🔒 Campagne non ouverte</button>
+        {% endif %}
+    {% elif user.is_authenticated and user.is_advertiser %}
+        {% if campaign.advertiser == user.advertiser_profile %}
+            <a href="{% url 'campaign_edit' campaign.pk %}" class="btn btn-primary">✏️ Modifier la campagne</a>
+        {% else %}
+            <button class="btn btn-secondary" disabled>🔒 Vous ne pouvez pas postuler</button>
+        {% endif %}
+    {% else %}
+        <a href="{% url 'register' %}?role=influencer" class="btn btn-primary">📝 Créer un compte pour postuler</a>
+    {% endif %}
 </div>
 {% endblock %}
 
@@ -108,6 +171,170 @@
     .campaign-description {
         max-height: 150px;
         font-size: 0.9rem;
+    }
+}
+
+.sticky-cta {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--bg-white);
+    border-top: 2px solid var(--border-color);
+    padding: var(--spacing-md) var(--spacing-xl);
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.sticky-cta .btn {
+    min-width: 300px;
+    padding: var(--spacing-md) var(--spacing-xl);
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .sticky-cta {
+        padding: var(--spacing-sm) var(--spacing-md);
+    }
+    
+    .sticky-cta .btn {
+        min-width: 100%;
+        font-size: 1rem;
+    }
+}
+
+.advertiser-reputation {
+    background: linear-gradient(135deg, #FFF5F0, #FFE8DC);
+    border: 2px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: var(--spacing-md);
+    margin-top: var(--spacing-lg);
+}
+
+.reputation-header h6 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: var(--spacing-sm);
+}
+
+.reputation-stats {
+    display: flex;
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-md);
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.stat-label {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.stat-value {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+.reputation-badge {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    background: var(--success-color);
+    color: white;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: 9999px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.badge-icon {
+    font-size: 1rem;
+}
+
+.matching-indicator {
+    background: linear-gradient(135deg, #FFF5F0, #FFE8DC);
+    border: 2px solid var(--primary-color);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-xl);
+    margin-bottom: var(--spacing-xl);
+}
+
+.matching-header {
+    display: flex;
+    gap: var(--spacing-lg);
+    align-items: center;
+    margin-bottom: var(--spacing-lg);
+}
+
+.score-circle {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.score {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: white;
+}
+
+.matching-text h4 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: var(--spacing-xs);
+}
+
+.matching-text p {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.matching-details {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.matching-details .detail-item {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: var(--border-radius);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .matching-header {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .score-circle {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .score {
+        font-size: 1.2rem;
     }
 }
 </style>

@@ -4,216 +4,629 @@
 {% block title %}Tableau de bord Annonceur - Wariblo{% endblock %}
 
 {% block content %}
-<div class="dashboard-layout">
-    <button class="sidebar-toggle" id="sidebarToggle">☰</button>
-    
-    <aside class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <a href="{% url 'home' %}" class="sidebar-brand">🔥 Wariblo</a>
-            
-            <div class="sidebar-user">
-                <div class="sidebar-user-avatar">
-                    {% if profile.logo %}
-                        <img src="{{ profile.logo.url }}" alt="{{ profile.company_name }}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
-                    {% else %}
-                        🏢
+<div class="container py-5">
+    <div class="dashboard-header mb-5">
+        <h1 class="dashboard-title">Tableau de bord</h1>
+        <p class="dashboard-subtitle">Bienvenue, {{ profile.company_name }} �</p>
+    </div>
+
+    <!-- Influenceurs disponibles (Section principale) -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="content-card">
+                <div class="content-card-header">
+                    <h3>🌟 Influenceurs disponibles</h3>
+                    <a href="{% url 'influencer_list' %}" class="view-all">Voir tout →</a>
+                </div>
+                {% if available_influencers %}
+                    <div class="influencers-grid">
+                        {% for influencer in available_influencers %}
+                            <div class="influencer-card-premium">
+                                <div class="influencer-avatar">
+                                    {% if influencer.profile_image %}
+                                        <img src="{{ influencer.profile_image.url }}" alt="{{ influencer.full_name }}">
+                                    {% else %}
+                                        <div class="avatar-placeholder">{{ influencer.full_name|slice:":1" }}</div>
+                                    {% endif %}
+                                </div>
+                                <div class="influencer-info">
+                                    <div class="influencer-name">{{ influencer.full_name }}</div>
+                                    <div class="influencer-niche">{{ influencer.get_niche_display }}</div>
+                                    <div class="influencer-location">📍 {{ influencer.location }}</div>
+                                    <div class="influencer-stats">
+                                        <span class="stat-badge">👥 {{ influencer.total_followers|default:0 }} followers</span>
+                                    </div>
+                                    {% if influencer.rate_per_post %}
+                                        <div class="influencer-rate">{{ influencer.rate_per_post|convert_currency:user }}/post</div>
+                                    {% endif %}
+                                </div>
+                                <div class="influencer-actions">
+                                    <a href="{% url 'influencer_detail' influencer.pk %}" class="btn btn-sm btn-outline">Voir profil</a>
+                                    <a href="{% url 'conversation_create' influencer.user.id %}" class="btn btn-sm btn-primary">💬 Contacter</a>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="empty-state">
+                        <div class="empty-icon">👥</div>
+                        <p>Aucun influenceur disponible pour le moment</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Section Profil Annonceur -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="content-card profile-section">
+                <div class="content-card-header">
+                    <h3>🏢 Mon Profil</h3>
+                    <a href="{% url 'advertiser_profile_edit' %}" class="view-all">Modifier →</a>
+                </div>
+                <div class="profile-content">
+                    <div class="profile-details">
+                        <div class="profile-detail-item">
+                            <span class="detail-label">Entreprise:</span>
+                            <span class="detail-value">{{ profile.company_name }}</span>
+                        </div>
+                        <div class="profile-detail-item">
+                            <span class="detail-label">Industrie:</span>
+                            <span class="detail-value">{{ profile.get_industry_display }}</span>
+                        </div>
+                        <div class="profile-detail-item">
+                            <span class="detail-label">Localisation:</span>
+                            <span class="detail-value">{{ profile.location }}</span>
+                        </div>
+                        <div class="profile-detail-item">
+                            <span class="detail-label">Email:</span>
+                            <span class="detail-value">{{ profile.user.email }}</span>
+                        </div>
+                    </div>
+                    {% if profile.company_logo %}
+                        <div class="profile-logo">
+                            <img src="{{ profile.company_logo.url }}" alt="{{ profile.company_name }}">
+                        </div>
                     {% endif %}
                 </div>
-                <div class="sidebar-user-name">{{ profile.company_name }}</div>
-                <div class="sidebar-user-role">Annonceur</div>
             </div>
         </div>
-        
-        <ul class="sidebar-nav">
-            <li class="sidebar-nav-item">
-                <a href="{% url 'advertiser_dashboard' %}" class="sidebar-nav-link active">
-                    <span class="sidebar-nav-icon">📊</span>
-                    <span>Tableau de bord</span>
-                </a>
-            </li>
-            <li class="sidebar-nav-item">
-                <a href="{% url 'advertiser_campaigns' %}" class="sidebar-nav-link">
-                    <span class="sidebar-nav-icon">🎯</span>
-                    <span>Mes campagnes</span>
-                </a>
-            </li>
-            <li class="sidebar-nav-item">
-                <a href="{% url 'campaign_create' %}" class="sidebar-nav-link">
-                    <span class="sidebar-nav-icon">➕</span>
-                    <span>Créer une campagne</span>
-                </a>
-            </li>
-            <li class="sidebar-nav-item">
-                <a href="{% url 'advertiser_profile_edit' %}" class="sidebar-nav-link">
-                    <span class="sidebar-nav-icon">⚙️</span>
-                    <span>Modifier le profil</span>
-                </a>
-            </li>
-            <li class="sidebar-nav-item">
-                <a href="{% url 'inbox' %}" class="sidebar-nav-link">
-                    <span class="sidebar-nav-icon">💬</span>
-                    <span>Messages</span>
-                </a>
-            </li>
-        </ul>
-        
-        <div class="sidebar-footer">
-            <a href="{% url 'logout' %}" class="sidebar-nav-link">
-                <span class="sidebar-nav-icon">🚪</span>
-                <span>Déconnexion</span>
-            </a>
+    </div>
+
+    <!-- Statistiques principales -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="stat-card-premium">
+                <div class="stat-icon-premium">🎯</div>
+                <div class="stat-content-premium">
+                    <div class="stat-value-premium">{{ total_campaigns|default:my_campaigns|length }}</div>
+                    <div class="stat-label-premium">Campagnes</div>
+                </div>
+            </div>
         </div>
-    </aside>
-    
-    <main class="dashboard-content">
-        <div class="container">
-            <h2 class="mb-4">Tableau de bord</h2>
-            
-            <div class="row mb-4">
-                <div class="col-md-4">
-                    <div class="card">
-                        <div class="card-body">
-                            <h6 class="card-title">Total des campagnes</h6>
-                            <h3>{{ total_campaigns|default:my_campaigns|length }}</h3>
-                        </div>
-                    </div>
+        <div class="col-md-3 mb-3">
+            <div class="stat-card-premium">
+                <div class="stat-icon-premium">📊</div>
+                <div class="stat-content-premium">
+                    <div class="stat-value-premium">{{ open_campaigns_count }}</div>
+                    <div class="stat-label-premium">Ouvertes</div>
                 </div>
-                <div class="col-md-4">
-                    <div class="card">
-                        <div class="card-body">
-                            <h6 class="card-title">Campagnes ouvertes</h6>
-                            <h3>{{ open_campaigns_count }}</h3>
-                        </div>
-                    </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="stat-card-premium">
+                <div class="stat-icon-premium">📝</div>
+                <div class="stat-content-premium">
+                    <div class="stat-value-premium">{{ total_applications|default:0 }}</div>
+                    <div class="stat-label-premium">Candidatures</div>
                 </div>
-                <div class="col-md-4">
-                    <div class="card">
-                        <div class="card-body">
-                            <h6 class="card-title">Total des candidatures</h6>
-                            <h3>{{ total_applications|default:0 }}</h3>
-                        </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="stat-card-premium">
+                <div class="stat-icon-premium">✅</div>
+                <div class="stat-content-premium">
+                    <div class="stat-value-premium">{{ accepted_applications }}</div>
+                    <div class="stat-label-premium">Acceptées</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Actions rapides -->
+    <div class="quick-actions mb-4">
+        <h3 class="section-title">Actions rapides</h3>
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <a href="{% url 'campaign_create' %}" class="action-card-premium">
+                    <div class="action-icon-premium">➕</div>
+                    <div class="action-title-premium">Créer une campagne</div>
+                    <div class="action-subtitle-premium">Lancez votre prochaine campagne</div>
+                </a>
+            </div>
+            <div class="col-md-4 mb-3">
+                <a href="{% url 'advertiser_campaigns' %}" class="action-card-premium">
+                    <div class="action-icon-premium">🎯</div>
+                    <div class="action-title-premium">Mes campagnes</div>
+                    <div class="action-subtitle-premium">{{ total_campaigns|default:my_campaigns|length }} actives</div>
+                </a>
+            </div>
+            <div class="col-md-4 mb-3">
+                <a href="{% url 'inbox' %}" class="action-card-premium">
+                    <div class="action-icon-premium">💬</div>
+                    <div class="action-title-premium">Messages</div>
+                    <div class="action-subtitle-premium">Discutez avec les influenceurs</div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Campagnes récentes -->
+        <div class="col-lg-6 mb-4">
+            <div class="content-card">
+                <div class="content-card-header">
+                    <h3>Campagnes récentes</h3>
+                    <a href="{% url 'advertiser_campaigns' %}" class="view-all">Voir tout →</a>
+                </div>
+                {% if my_campaigns %}
+                    <div class="campaign-list">
+                        {% for campaign in my_campaigns|slice:":5" %}
+                            <div class="campaign-item">
+                                <div class="campaign-info">
+                                    <div class="campaign-title">{{ campaign.title }}</div>
+                                    <div class="campaign-meta">{{ campaign.created_at|date:"d M Y" }}</div>
+                                </div>
+                                <div class="campaign-status status-{{ campaign.status }}">
+                                    {{ campaign.status|title }}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="empty-state">
+                        <div class="empty-icon">🎯</div>
+                        <p>Aucune campagne pour le moment</p>
+                        <a href="{% url 'campaign_create' %}" class="btn btn-primary">Créer votre première campagne</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Statistiques de performance -->
+        <div class="col-lg-6 mb-4">
+            <div class="content-card">
+                <div class="content-card-header">
+                    <h3>Performance</h3>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-item-label">Taux d'acceptation</div>
+                        <div class="stat-item-value">{{ acceptance_rate|default:0 }}%</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-item-label">Budget total</div>
+                        <div class="stat-item-value">{{ total_budget|convert_currency:user }}</div>
                     </div>
                 </div>
             </div>
-            
-            <h4 class="mb-3 mt-4">Statistiques de performance</h4>
-            <div class="row mb-4">
-                <div class="col-md-6 mb-3">
-                    <div class="card">
-                        <div class="card-body">
-                            <h6 class="card-title">Statut des campagnes</h6>
-                            <canvas id="campaignsChart" height="150"></canvas>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6 mb-3">
-                    <div class="card">
-                        <div class="card-body">
-                            <h6 class="card-title">Statut des candidatures</h6>
-                            <canvas id="applicationsChart" height="150"></canvas>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <h4 class="mb-3">Campagnes récentes</h4>
-            {% if my_campaigns %}
-                <div class="table-responsive">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Titre</th>
-                                <th>Statut</th>
-                                <th>Budget</th>
-                                <th>Candidatures</th>
-                                <th>Créée le</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for campaign in my_campaigns %}
-                                <tr>
-                                    <td><a href="{% url 'campaign_detail' campaign.pk %}">{{ campaign.title }}</a></td>
-                                    <td><span class="status-badge status-{{ campaign.status }}">{{ campaign.status|title }}</span></td>
-                                    <td>{{ campaign.budget|convert_currency:user }}</td>
-                                    <td>{{ campaign.applications_count }}</td>
-                                    <td>{{ campaign.created_at|date:"d M Y" }}</td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            {% else %}
-                <p class="text-muted">Aucune campagne pour le moment. <a href="{% url 'campaign_create' %}">Créez votre première campagne</a> pour commencer.</p>
-            {% endif %}
         </div>
-    </main>
+    </div>
 </div>
 
-<script>
-// Toggle sidebar
-document.getElementById('sidebarToggle').addEventListener('click', function() {
-    document.getElementById('sidebar').classList.toggle('active');
-});
+<style>
+.dashboard-header {
+    text-align: center;
+}
 
-// Graphique des campagnes
-const campaignsCtx = document.getElementById('campaignsChart').getContext('2d');
-const closedCampaigns = {{ total_campaigns|default:0 }} - {{ open_campaigns_count|default:0 }};
-new Chart(campaignsCtx, {
-    type: 'doughnut',
-    data: {
-        labels: ['Ouvertes', 'Fermées', 'Brouillons'],
-        datasets: [{
-            data: [{{ open_campaigns_count|default:0 }}, closedCampaigns, 0],
-            backgroundColor: ['#A5D6A7', '#EF9A9A', '#B0BEC5'],
-            borderWidth: 0
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: {
-                position: 'bottom'
-            }
-        }
+.dashboard-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.dashboard-subtitle {
+    font-size: 1.1rem;
+    color: var(--text-muted);
+}
+
+.stat-card-premium {
+    background: white;
+    border-radius: 16px;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.stat-card-premium:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    border-color: var(--primary-color);
+}
+
+.stat-icon-premium {
+    font-size: 2rem;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, rgba(255, 69, 0, 0.1), rgba(199, 21, 133, 0.1));
+    border-radius: 12px;
+}
+
+.stat-content-premium {
+    flex: 1;
+}
+
+.stat-value-premium {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 0.25rem;
+}
+
+.stat-label-premium {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.quick-actions {
+    margin-bottom: 2rem;
+}
+
+.section-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--text-dark);
+}
+
+.action-card-premium {
+    background: white;
+    border-radius: 16px;
+    padding: 1.5rem;
+    display: block;
+    text-decoration: none;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.action-card-premium:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    border-color: var(--primary-color);
+}
+
+.action-icon-premium {
+    font-size: 2rem;
+    margin-bottom: 0.75rem;
+}
+
+.action-title-premium {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 0.25rem;
+}
+
+.action-subtitle-premium {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+.content-card {
+    background: white;
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.content-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.content-card-header h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.view-all {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.campaign-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.campaign-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: var(--bg-light);
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.campaign-item:hover {
+    background: rgba(255, 69, 0, 0.05);
+}
+
+.campaign-info {
+    flex: 1;
+}
+
+.campaign-title {
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 0.25rem;
+}
+
+.campaign-meta {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.campaign-status {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.status-open {
+    background: rgba(76, 175, 80, 0.1);
+    color: #4CAF50;
+}
+
+.status-closed {
+    background: rgba(244, 67, 54, 0.1);
+    color: #F44336;
+}
+
+.status-draft {
+    background: rgba(158, 158, 158, 0.1);
+    color: #9E9E9E;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.stat-item {
+    background: var(--bg-light);
+    padding: 1.5rem;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.stat-item-label {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+}
+
+.stat-item-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.empty-state {
+    text-align: center;
+    padding: 2rem;
+}
+
+.empty-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.empty-state p {
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .dashboard-title {
+        font-size: 1.8rem;
     }
-});
-
-// Graphique des candidatures
-const applicationsCtx = document.getElementById('applicationsChart').getContext('2d');
-new Chart(applicationsCtx, {
-    type: 'bar',
-    data: {
-        labels: ['Candidatures'],
-        datasets: [{
-            label: 'Total',
-            data: [{{ total_applications }}],
-            backgroundColor: 'rgba(255, 69, 0, 0.8)',
-            borderColor: 'rgba(255, 69, 0, 1)',
-            borderWidth: 1
-        }, {
-            label: 'Acceptées',
-            data: [{{ accepted_applications }}],
-            backgroundColor: 'rgba(165, 214, 167, 0.8)',
-            borderColor: 'rgba(165, 214, 167, 1)',
-            borderWidth: 1
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {
-            y: {
-                beginAtZero: true
-            }
-        },
-        plugins: {
-            legend: {
-                position: 'bottom'
-            }
-        }
+    
+    .stat-card-premium {
+        flex-direction: column;
+        text-align: center;
     }
-});
-</script>
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .influencers-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .profile-content {
+        flex-direction: column;
+    }
+}
 
+/* Influenceurs Grid Styles */
+.influencers-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.influencer-card-premium {
+    background: var(--bg-light);
+    border-radius: 12px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.influencer-card-premium:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    border-color: var(--primary-color);
+}
+
+.influencer-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin: 0 auto;
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.influencer-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.avatar-placeholder {
+    font-size: 2rem;
+    font-weight: 700;
+    color: white;
+}
+
+.influencer-info {
+    text-align: center;
+}
+
+.influencer-name {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 0.5rem;
+}
+
+.influencer-niche {
+    font-size: 0.9rem;
+    color: var(--primary-color);
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.influencer-location {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+}
+
+.influencer-stats {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.stat-badge {
+    background: rgba(255, 69, 0, 0.1);
+    color: var(--primary-color);
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.influencer-rate {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+.influencer-actions {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+}
+
+/* Profile Section Styles */
+.profile-section {
+    background: linear-gradient(135deg, rgba(255, 69, 0, 0.05), rgba(199, 21, 133, 0.05));
+}
+
+.profile-content {
+    display: flex;
+    gap: 2rem;
+    align-items: flex-start;
+}
+
+.profile-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.profile-detail-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    background: white;
+    border-radius: 8px;
+}
+
+.detail-label {
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+.detail-value {
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+.profile-logo {
+    width: 120px;
+    height: 120px;
+    border-radius: 12px;
+    overflow: hidden;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.profile-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+</style>
 {% endblock %}
