@@ -1,0 +1,30 @@
+services:
+  - type: web
+    name: wariblo
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn wariblo.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --timeout 120
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: wariblo-db
+          property: connectionString
+      - key: SECRET_KEY
+        generate: true
+      - key: DEBUG
+        value: "False"
+      - key: ALLOWED_HOSTS
+        value: "*.onrender.com"
+      - key: ENVIRONMENT
+        value: "production"
+      - key: CONTACT_EMAIL
+        value: "afletounoudouprince5@gmail.com"
+      - key: CONTACT_WHATSAPP
+        value: "+22369549391"
+      - key: CONTACT_PHONE
+        value: "+22369549391"
+
+databases:
+  - name: wariblo-db
+    databaseName: wariblo
+    user: wariblo

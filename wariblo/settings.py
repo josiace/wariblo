@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 import os
 from dotenv import load_dotenv
+import dj_database_url
 
 # Load environment variables
 load_dotenv()
@@ -111,25 +112,20 @@ WSGI_APPLICATION = 'wariblo.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DB_ENGINE = os.getenv('DB_ENGINE', 'django.db.backends.sqlite3')
+# Configuration flexible pour plateformes gratuites (Render, Railway, etc.)
+DATABASES = {
+    'default': dj_database_url.config(
+        default='sqlite:///' + str(BASE_DIR / 'db.sqlite3'),
+        conn_max_age=600,
+        conn_health_checks=True
+    )
+}
 
-if DB_ENGINE == 'django.db.backends.postgresql':
-    DATABASES = {
-        'default': {
-            'ENGINE': DB_ENGINE,
-            'NAME': os.getenv('DB_NAME', 'wariblo'),
-            'USER': os.getenv('DB_USER', 'wariblo_user'),
-            'PASSWORD': os.getenv('DB_PASSWORD', ''),
-            'HOST': os.getenv('DB_HOST', 'localhost'),
-            'PORT': os.getenv('DB_PORT', '5432'),
-        }
-    }
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': DB_ENGINE,
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
+# Configuration spécifique PostgreSQL si DATABASE_URL est fournie
+if os.getenv('DATABASE_URL'):
+    DATABASES['default']['ENGINE'] = 'django.db.backends.postgresql'
+    DATABASES['default']['OPTIONS'] = {
+        'sslmode': 'require',
     }
 
 
@@ -221,6 +217,7 @@ CONTACT_WHATSAPP = os.getenv('CONTACT_WHATSAPP', '+22369549391')
 CONTACT_PHONE = os.getenv('CONTACT_PHONE', '+22369549391')
 
 # Security Settings
+# Adapté pour plateformes gratuites (désactiver SSL redirect si pas de certificat)
 SECURE_SSL_REDIRECT = os.getenv('SECURE_SSL_REDIRECT', 'False') == 'True'
 SESSION_COOKIE_SECURE = os.getenv('SESSION_COOKIE_SECURE', 'False') == 'True'
 CSRF_COOKIE_SECURE = os.getenv('CSRF_COOKIE_SECURE', 'False') == 'True'
