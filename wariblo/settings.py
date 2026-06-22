@@ -8,7 +8,7 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
-"""
+
 
 from pathlib import Path
 import os
@@ -134,11 +134,11 @@ DATABASES = {
 }
 
 # Configuration spécifique PostgreSQL si DATABASE_URL est fournie
-if os.getenv('DATABASE_URL'):
-    DATABASES['default']['ENGINE'] = 'django.db.backends.postgresql'
-    DATABASES['default']['OPTIONS'] = {
-        'sslmode': 'require',
-    }
+# if os.getenv('DATABASE_URL'):
+#     DATABASES['default']['ENGINE'] = 'django.db.backends.postgresql'
+#     DATABASES['default']['OPTIONS'] = {
+#         'sslmode': 'require',
+#     }
 
 
 # Password validation
@@ -179,7 +179,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
-STATICFILES_DIRS = [BASE_DIR / 'static']
+STATICFILES_DIRS = [BASE_DIR / 'static'] if (BASE_DIR / 'static').exists() else []
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # WhiteNoise Configuration for serving static files
