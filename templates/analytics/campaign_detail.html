@@ -1,0 +1,309 @@
+{% extends 'base.html' %}
+{% load currency %}
+
+{% block title %}Analytics {{ campaign.title }} - Wariblo{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="dashboard-header mb-5">
+        <h1 class="dashboard-title">📊 Analytics: {{ campaign.title }}</h1>
+        <p class="dashboard-subtitle">Statistiques détaillées de la campagne</p>
+    </div>
+
+    <!-- Statistiques principales -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="stat-card-premium">
+                <div class="stat-icon-premium">👁️</div>
+                <div class="stat-content-premium">
+                    <div class="stat-value-premium">{{ analytics.total_views }}</div>
+                    <div class="stat-label-premium">Vues totales</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="stat-card-premium">
+                <div class="stat-icon-premium">👁️</div>
+                <div class="stat-content-premium">
+                    <div class="stat-value-premium">{{ analytics.unique_views }}</div>
+                    <div class="stat-label-premium">Vues uniques</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="stat-card-premium">
+                <div class="stat-icon-premium">👆</div>
+                <div class="stat-content-premium">
+                    <div class="stat-value-premium">{{ analytics.total_clicks }}</div>
+                    <div class="stat-label-premium">Clics totaux</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="stat-card-premium">
+                <div class="stat-icon-premium">📤</div>
+                <div class="stat-content-premium">
+                    <div class="stat-value-premium">{{ analytics.total_shares }}</div>
+                    <div class="stat-label-premium">Partages totaux</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Metrics avancés -->
+    <div class="row mb-4">
+        <div class="col-md-4 mb-3">
+            <div class="stat-card-premium">
+                <div class="stat-icon-premium">📈</div>
+                <div class="stat-content-premium">
+                    <div class="stat-value-premium">{{ analytics.click_through_rate|floatformat:1 }}%</div>
+                    <div class="stat-label-premium">CTR</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="stat-card-premium">
+                <div class="stat-icon-premium">💰</div>
+                <div class="stat-content-premium">
+                    <div class="stat-value-premium">{{ analytics.roi|floatformat:2 }}</div>
+                    <div class="stat-label-premium">ROI</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="stat-card-premium">
+                <div class="stat-icon-premium">❤️</div>
+                <div class="stat-content-premium">
+                    <div class="stat-value-premium">{{ analytics.engagement_rate|floatformat:1 }}%</div>
+                    <div class="stat-label-premium">Taux d'engagement</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Activités des utilisateurs -->
+        <div class="col-lg-6 mb-4">
+            <div class="content-card">
+                <div class="content-card-header">
+                    <h3>📝 Activités récentes</h3>
+                </div>
+                {% if activities %}
+                    <div class="activity-list">
+                        {% for activity in activities %}
+                            <div class="activity-item">
+                                <div class="activity-info">
+                                    <div class="activity-user">{{ activity.user.email }}</div>
+                                    <div class="activity-type">{{ activity.get_activity_type_display }}</div>
+                                </div>
+                                <div class="activity-time">{{ activity.created_at|date:"d M Y H:i" }}</div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="empty-state">
+                        <div class="empty-icon">📝</div>
+                        <p>Aucune activité enregistrée</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Statistiques par type d'activité -->
+        <div class="col-lg-6 mb-4">
+            <div class="content-card">
+                <div class="content-card-header">
+                    <h3>📊 Répartition par type d'activité</h3>
+                </div>
+                {% if activity_stats %}
+                    <div class="activity-stats-grid">
+                        {% for stat in activity_stats %}
+                            <div class="activity-stat-card">
+                                <div class="activity-stat-label">{{ stat.activity_type|title }}</div>
+                                <div class="activity-stat-value">{{ stat.count }}</div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="empty-state">
+                        <div class="empty-icon">📊</div>
+                        <p>Aucune statistique disponible</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <a href="{% url 'analytics:campaign_dashboard' %}" class="btn btn-outline">← Retour aux analytics</a>
+    </div>
+</div>
+
+<style>
+.dashboard-header {
+    text-align: center;
+}
+
+.dashboard-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.dashboard-subtitle {
+    font-size: 1.1rem;
+    color: var(--text-muted);
+}
+
+.stat-card-premium {
+    background: white;
+    border-radius: 16px;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.stat-card-premium:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    border-color: var(--primary-color);
+}
+
+.stat-icon-premium {
+    font-size: 2rem;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, rgba(255, 69, 0, 0.1), rgba(199, 21, 133, 0.1));
+    border-radius: 12px;
+}
+
+.stat-content-premium {
+    flex: 1;
+}
+
+.stat-value-premium {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 0.25rem;
+}
+
+.stat-label-premium {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.content-card {
+    background: white;
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.content-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.content-card-header h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.activity-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.activity-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: var(--bg-light);
+    border-radius: 12px;
+}
+
+.activity-info {
+    flex: 1;
+}
+
+.activity-user {
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 0.25rem;
+}
+
+.activity-type {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.activity-time {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.activity-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 1rem;
+}
+
+.activity-stat-card {
+    background: var(--bg-light);
+    padding: 1.5rem;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.activity-stat-label {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+}
+
+.activity-stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.empty-state {
+    text-align: center;
+    padding: 2rem;
+}
+
+.empty-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.empty-state p {
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+}
+
+@media (max-width: 768px) {
+    .activity-stats-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+</style>
+{% endblock %}
