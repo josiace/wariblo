@@ -39,9 +39,9 @@
                     </div>
                     {% endif %}
                     
-                    <form method="post">
+                    <form method="post" action="">
                         {% csrf_token %}
-                        <div class="form-group">
+                        <div class="form-group mb-3">
                             <label for="{{ form.pitch.id_for_label }}" class="form-label">Votre Pitch</label>
                             {{ form.pitch }}
                             {% if form.pitch.errors %}
@@ -49,7 +49,7 @@
                             {% endif %}
                             <small class="form-text text-muted">Expliquez à l'annonceur pourquoi vous êtes le candidat idéal pour cette campagne.</small>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group mb-3">
                             <label for="{{ form.proposed_price.id_for_label }}" class="form-label">Prix Proposé ({{ user|currency_symbol }})</label>
                             {{ form.proposed_price }}
                             {% if form.proposed_price.errors %}
