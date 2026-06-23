@@ -168,12 +168,7 @@ STATICFILES_DIRS = [BASE_DIR / 'static'] if (BASE_DIR / 'static').exists() else 
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # WhiteNoise Configuration for serving static files
-STATICFILES_STORAGE = os.getenv(
-    'STATICFILES_STORAGE',
-    'django.contrib.staticfiles.storage.StaticFilesStorage'
-    if DEBUG
-    else 'whitenoise.storage.CompressedManifestStaticFilesStorage',
-)
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 
 # Media files (User uploads) - Supabase Storage
 MEDIA_URL = 'media/'
