@@ -111,13 +111,19 @@ WSGI_APPLICATION = 'wariblo.wsgi.application'
 #     )
 # }
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.config(
+        default='sqlite:///' + str(BASE_DIR / 'db.sqlite3'),
+        conn_max_age=600,
+        conn_health_checks=True
+    )
 }
-
 # Configuration spécifique PostgreSQL si DATABASE_URL est fournie
 # if os.getenv('DATABASE_URL'):
 #     DATABASES['default']['ENGINE'] = 'django.db.backends.postgresql'
