@@ -1,4 +1,3 @@
-
 from pathlib import Path
 import os
 from dotenv import load_dotenv
@@ -12,7 +11,7 @@ SENTRY_DSN = os.getenv('SENTRY_DSN')
 if SENTRY_DSN:
     import sentry_sdk
     from sentry_sdk.integrations.django import DjangoIntegration
-    
+
     sentry_sdk.init(
         dsn=SENTRY_DSN,
         integrations=[DjangoIntegration()],
@@ -26,7 +25,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Admin custom CSS
 ADMIN_CSS = 'css/admin.css'
-
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('SECRET_KEY')
@@ -102,21 +100,7 @@ WSGI_APPLICATION = 'wariblo.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-# Configuration flexible pour plateformes gratuites (Render, Railway, etc.)
-# DATABASES = {
-#     'default': dj_database_url.config(
-#         default='sqlite:///' + str(BASE_DIR / 'db.sqlite3'),
-#         conn_max_age=600,
-#         conn_health_checks=True
-#     )
-# }
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
+# Configuration flexible : SQLite en local, PostgreSQL via DATABASE_URL en production
 DATABASES = {
     'default': dj_database_url.config(
         default='sqlite:///' + str(BASE_DIR / 'db.sqlite3'),
@@ -124,13 +108,6 @@ DATABASES = {
         conn_health_checks=True
     )
 }
-# Configuration spécifique PostgreSQL si DATABASE_URL est fournie
-# if os.getenv('DATABASE_URL'):
-#     DATABASES['default']['ENGINE'] = 'django.db.backends.postgresql'
-#     DATABASES['default']['OPTIONS'] = {
-#         'sslmode': 'require',
-#     }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -174,18 +151,13 @@ STATICFILES_DIRS = [BASE_DIR / 'static'] if (BASE_DIR / 'static').exists() else 
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # WhiteNoise Configuration for serving static files
-# STATICFILES_STORAGE = os.getenv(
-#     'STATICFILES_STORAGE',
-#     'whitenoise.storage.CompressedManifestStaticFilesStorage'
-#     if not DEBUG
-#     else 'django.contrib.staticfiles.storage.StaticFilesStorage',
-# )
 STATICFILES_STORAGE = os.getenv(
     'STATICFILES_STORAGE',
     'whitenoise.storage.CompressedStaticFilesStorage'
     if not DEBUG
     else 'django.contrib.staticfiles.storage.StaticFilesStorage',
 )
+
 # Media files (User uploads) - Supabase Storage
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
@@ -228,20 +200,22 @@ EMAIL_BACKEND = os.getenv('EMAIL_BACKEND', 'django.core.mail.backends.console.Em
 EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.gmail.com')
 EMAIL_PORT = int(os.getenv('EMAIL_PORT', 587))
 EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'True') == 'True'
-EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', 'afletounoudouprince5@gmail.com')
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', '')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
-DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'afletounoudouprince5@gmail.com')
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', '')
 
-# Contact Information
-CONTACT_EMAIL = os.getenv('CONTACT_EMAIL', 'afletounoudouprince5@gmail.com')
-CONTACT_WHATSAPP = os.getenv('CONTACT_WHATSAPP', '+22369549391')
-CONTACT_PHONE = os.getenv('CONTACT_PHONE', '+22369549391')
+# Contact Information (variables d'environnement obligatoires en production)
+CONTACT_EMAIL = os.getenv('CONTACT_EMAIL', '')
+CONTACT_WHATSAPP = os.getenv('CONTACT_WHATSAPP', '')
+CONTACT_PHONE = os.getenv('CONTACT_PHONE', '')
 
-# Security Settings
-# Adapté pour plateformes gratuites (désactiver SSL redirect si pas de certificat)
-SECURE_SSL_REDIRECT = os.getenv('SECURE_SSL_REDIRECT', 'False') == 'True'
-SESSION_COOKIE_SECURE = os.getenv('SESSION_COOKIE_SECURE', 'False') == 'True'
-CSRF_COOKIE_SECURE = os.getenv('CSRF_COOKIE_SECURE', 'False') == 'True'
+# Security Settings (securise par defaut)
+# Pour le developpement local en HTTP, definir INSECURE_DEV=True dans le .env
+INSECURE_DEV = os.getenv('INSECURE_DEV', 'False') == 'True'
+
+SECURE_SSL_REDIRECT = os.getenv('SECURE_SSL_REDIRECT', 'False' if INSECURE_DEV else 'True') == 'True'
+SESSION_COOKIE_SECURE = os.getenv('SESSION_COOKIE_SECURE', 'False' if INSECURE_DEV else 'True') == 'True'
+CSRF_COOKIE_SECURE = os.getenv('CSRF_COOKIE_SECURE', 'False' if INSECURE_DEV else 'True') == 'True'
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 X_FRAME_OPTIONS = 'DENY'
@@ -251,13 +225,13 @@ CSRF_TRUSTED_ORIGINS = [
     'http://localhost:4000',
     'http://127.0.0.1:4000',
     'http://127.0.0.1:63305',
-    'https://wariblo.onrender.com',  # ← ajoute cette ligne
+    'https://wariblo.onrender.com',
 ]
 
-# HSTS Settings
-SECURE_HSTS_SECONDS = int(os.getenv('SECURE_HSTS_SECONDS', '0'))
-SECURE_HSTS_INCLUDE_SUBDOMAINS = os.getenv('SECURE_HSTS_INCLUDE_SUBDOMAINS', 'False') == 'True'
-SECURE_HSTS_PRELOAD = os.getenv('SECURE_HSTS_PRELOAD', 'False') == 'True'
+# HSTS Settings (actif par defaut en production)
+SECURE_HSTS_SECONDS = int(os.getenv('SECURE_HSTS_SECONDS', '0' if INSECURE_DEV else '31536000'))
+SECURE_HSTS_INCLUDE_SUBDOMAINS = os.getenv('SECURE_HSTS_INCLUDE_SUBDOMAINS', 'False' if INSECURE_DEV else 'True') == 'True'
+SECURE_HSTS_PRELOAD = os.getenv('SECURE_HSTS_PRELOAD', 'False' if INSECURE_DEV else 'True') == 'True'
 
 # Django Axes Configuration (Rate Limiting)
 AXES_FAILURE_LIMIT = int(os.getenv('AXES_FAILURE_LIMIT', '5'))
@@ -332,4 +306,3 @@ LOGGING = {
         },
     },
 }
-

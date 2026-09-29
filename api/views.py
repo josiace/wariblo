@@ -1,7 +1,7 @@
 from rest_framework import viewsets, filters, status, generics
 from rest_framework.decorators import action, api_view
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
 from rest_framework.authtoken.models import Token
 from django_filters.rest_framework import DjangoFilterBackend
 from campaigns.models import Campaign
@@ -14,8 +14,8 @@ from reviews.models import Review
 from analytics.models import CampaignAnalytics, UserActivity
 from core.models import Country, Currency, SubscriptionPlan, Subscription, Transaction, PaymentMethod, ManualPayment, SiteSettings
 from .serializers import (
-    CampaignSerializer, 
-    ApplicationSerializer, 
+    CampaignSerializer,
+    ApplicationSerializer,
     ApplicationCreateSerializer,
     InfluencerProfileSerializer,
     InfluencerProfileCreateSerializer,
@@ -55,7 +55,7 @@ def register(request):
         return Response({
             'user': UserSerializer(user).data,
             'token': token.key
-        }, status=status.HTTP_201_CREATED)
+       }, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -78,31 +78,37 @@ def login(request):
 @api_view(['POST'])
 def logout(request):
     """
-    API endpoint pour la déconnexion
+    API endpoint pour la deconnexion
     """
     if request.user.is_authenticated:
         try:
             request.user.auth_token.delete()
         except:
             pass
-    return Response({'message': 'Déconnexion réussie'})
+    return Response({'message': 'Deconnexion reussie'})
 
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
     """
-    API endpoint pour les utilisateurs
+    API endpoint pour les utilisateurs.
+    Liste et detail reserves aux administrateurs ;
+    l'action 'me' reste accessible a tout utilisateur authentifie.
     """
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_fields = ['role', 'country']
-    search_fields = ['email', 'username', 'full_name']
-    
+    search_fields = ['email']
+
+    def get_permissions(self):
+        if self.action == 'me':
+            return [IsAuthenticated()]
+        return [IsAdminUser()]
+
     @action(detail=False, methods=['get'])
     def me(self, request):
         """
-        Récupérer le profil de l'utilisateur connecté
+        Recuperer le profil de l'utilisateur connecte
         """
         serializer = self.get_serializer(request.user)
         return Response(serializer.data)
@@ -113,25 +119,26 @@ class InfluencerProfileViewSet(viewsets.ModelViewSet):
     API endpoint pour les profils influenceurs
     """
     queryset = InfluencerProfile.objects.select_related('user')
+    serializer_class = InfluencerProfileSerializer
     permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['niche', 'location']
     search_fields = ['full_name', 'bio']
     ordering_fields = ['created_at', 'instagram_followers']
     ordering = ['-instagram_followers']
-    
+
     def get_serializer_class(self):
         if self.action == 'create':
             return InfluencerProfileCreateSerializer
         return InfluencerProfileSerializer
-    
+
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
-    
+
     @action(detail=False, methods=['get'])
     def my_profile(self, request):
         """
-        Récupérer le profil de l'influenceur connecté
+        Recuperer le profil de l'influenceur connecte
         """
         try:
             influencer = request.user.influencer_profile
@@ -139,7 +146,7 @@ class InfluencerProfileViewSet(viewsets.ModelViewSet):
             return Response(serializer.data)
         except InfluencerProfile.DoesNotExist:
             return Response(
-                {'error': 'Profil influenceur non trouvé'},
+                {'error': 'Profil influenceur non trouve'},
                 status=status.HTTP_404_NOT_FOUND
             )
 
@@ -154,19 +161,19 @@ class AdvertiserProfileViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_fields = ['industry', 'location']
     search_fields = ['company_name', 'company_description']
-    
+
     def get_serializer_class(self):
         if self.action == 'create':
             return AdvertiserProfileCreateSerializer
         return AdvertiserProfileSerializer
-    
+
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
-    
+
     @action(detail=False, methods=['get'])
     def my_profile(self, request):
         """
-        Récupérer le profil de l'annonceur connecté
+        Recuperer le profil de l'annonceur connecte
         """
         try:
             advertiser = request.user.advertiser_profile
@@ -174,7 +181,7 @@ class AdvertiserProfileViewSet(viewsets.ModelViewSet):
             return Response(serializer.data)
         except AdvertiserProfile.DoesNotExist:
             return Response(
-                {'error': 'Profil annonceur non trouvé'},
+                {'error': 'Profil annonceur non trouve'},
                 status=status.HTTP_404_NOT_FOUND
             )
 
@@ -191,36 +198,36 @@ class CampaignViewSet(viewsets.ModelViewSet):
     search_fields = ['title', 'description', 'requirements']
     ordering_fields = ['created_at', 'budget', 'deadline']
     ordering = ['-created_at']
-    
+
     def get_serializer_class(self):
         if self.action == 'create':
             return CampaignCreateSerializer
         return CampaignSerializer
-    
+
     def perform_create(self, serializer):
         try:
             advertiser = self.request.user.advertiser_profile
             serializer.save(advertiser=advertiser)
         except AdvertiserProfile.DoesNotExist:
             return Response(
-                {'error': 'Profil annonceur non trouvé'},
+                {'error': 'Profil annonceur non trouve'},
                 status=status.HTTP_400_BAD_REQUEST
             )
-    
+
     @action(detail=True, methods=['get'])
     def applications(self, request, pk=None):
         """
-        Récupérer les applications pour une campagne spécifique
+        Recuperer les applications pour une campagne specifique
         """
         campaign = self.get_object()
         applications = campaign.applications.select_related('influencer__user')
         serializer = ApplicationSerializer(applications, many=True)
         return Response(serializer.data)
-    
+
     @action(detail=False, methods=['get'])
     def my_campaigns(self, request):
         """
-        Récupérer les campagnes de l'annonceur connecté
+        Recuperer les campagnes de l'annonceur connecte
         """
         try:
             advertiser = request.user.advertiser_profile
@@ -229,7 +236,7 @@ class CampaignViewSet(viewsets.ModelViewSet):
             return Response(serializer.data)
         except AdvertiserProfile.DoesNotExist:
             return Response(
-                {'error': 'Profil annonceur non trouvé'},
+                {'error': 'Profil annonceur non trouve'},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
@@ -242,35 +249,36 @@ class ApplicationViewSet(viewsets.ModelViewSet):
         'campaign__advertiser__user',
         'influencer__user'
     )
+    serializer_class = ApplicationSerializer
     permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['status', 'campaign', 'influencer']
     search_fields = ['pitch']
     ordering_fields = ['created_at', 'proposed_price']
     ordering = ['-created_at']
-    
+
     def get_serializer_class(self):
         if self.action == 'create':
             return ApplicationCreateSerializer
         return ApplicationSerializer
-    
+
     def perform_create(self, serializer):
         """
-        Créer une application avec l'influenceur connecté
+        Creer une application avec l'influenceur connecte
         """
         try:
             influencer = self.request.user.influencer_profile
             serializer.save(influencer=influencer)
         except InfluencerProfile.DoesNotExist:
             return Response(
-                {'error': 'Profil influenceur non trouvé'},
+                {'error': 'Profil influenceur non trouve'},
                 status=status.HTTP_400_BAD_REQUEST
             )
-    
+
     @action(detail=False, methods=['get'])
     def my_applications(self, request):
         """
-        Récupérer les applications de l'influenceur connecté
+        Recuperer les applications de l'influenceur connecte
         """
         try:
             influencer = request.user.influencer_profile
@@ -279,8 +287,8 @@ class ApplicationViewSet(viewsets.ModelViewSet):
             return Response(serializer.data)
         except InfluencerProfile.DoesNotExist:
             return Response(
-                {'error': 'Profil influenceur non trouvé'},
-                status=status.HTTP_400_BAD_REQUEST
+                {'error': 'Profil influenceur non trouve'},
+                status=status.HTTP_404_NOT_FOUND
             )
 
 
@@ -293,20 +301,26 @@ class ConversationViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['participants']
-    
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        if self.request.user.is_staff:
+            return qs
+        return qs.filter(participants=self.request.user).distinct()
+
     @action(detail=False, methods=['get'])
     def my_conversations(self, request):
         """
-        Récupérer les conversations de l'utilisateur connecté
+        Recuperer les conversations de l'utilisateur connecte
         """
         conversations = self.queryset.filter(participants=request.user)
         serializer = self.get_serializer(conversations, many=True)
         return Response(serializer.data)
-    
+
     @action(detail=True, methods=['get'])
     def messages(self, request, pk=None):
         """
-        Récupérer les messages d'une conversation
+        Recuperer les messages d'une conversation
         """
         conversation = self.get_object()
         messages = conversation.messages.all().select_related('sender')
@@ -325,12 +339,18 @@ class MessageViewSet(viewsets.ModelViewSet):
     filterset_fields = ['conversation', 'is_read']
     ordering_fields = ['created_at']
     ordering = ['created_at']
-    
+
     def get_serializer_class(self):
         if self.action == 'create':
             return MessageCreateSerializer
         return MessageSerializer
-    
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        if self.request.user.is_staff:
+            return qs
+        return qs.filter(conversation__participants=self.request.user).distinct()
+
     def perform_create(self, serializer):
         serializer.save(sender=self.request.user)
 
@@ -347,28 +367,28 @@ class ReviewViewSet(viewsets.ModelViewSet):
     search_fields = ['comment']
     ordering_fields = ['created_at', 'rating']
     ordering = ['-created_at']
-    
+
     def get_serializer_class(self):
         if self.action == 'create':
             return ReviewCreateSerializer
         return ReviewSerializer
-    
+
     def perform_create(self, serializer):
         serializer.save(reviewer=self.request.user)
-    
+
     @action(detail=False, methods=['get'])
     def my_reviews(self, request):
         """
-        Récupérer les avis de l'utilisateur connecté
+        Recuperer les avis de l'utilisateur connecte
         """
         reviews = self.queryset.filter(reviewer=request.user)
         serializer = self.get_serializer(reviews, many=True)
         return Response(serializer.data)
-    
+
     @action(detail=False, methods=['get'])
     def reviews_about_me(self, request):
         """
-        Récupérer les avis sur l'utilisateur connecté
+        Recuperer les avis sur l'utilisateur connecte
         """
         reviews = self.queryset.filter(reviewed_user=request.user)
         serializer = self.get_serializer(reviews, many=True)
@@ -388,18 +408,26 @@ class CampaignAnalyticsViewSet(viewsets.ReadOnlyModelViewSet):
 
 class UserActivityViewSet(viewsets.ReadOnlyModelViewSet):
     """
-    API endpoint pour les activités utilisateurs
+    API endpoint pour les activites utilisateurs.
+    Les utilisateurs ne voient que leurs propres activites ;
+    le staff conserve l'acces global.
     """
     queryset = UserActivity.objects.select_related('user', 'campaign')
     serializer_class = UserActivitySerializer
     permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['user', 'activity_type', 'campaign']
-    
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        if self.request.user.is_staff:
+            return qs
+        return qs.filter(user=self.request.user)
+
     @action(detail=False, methods=['get'])
     def my_activities(self, request):
         """
-        Récupérer les activités de l'utilisateur connecté
+        Recuperer les activites de l'utilisateur connecte
         """
         activities = self.queryset.filter(user=request.user)
         serializer = self.get_serializer(activities, many=True)
@@ -443,18 +471,26 @@ class SubscriptionPlanViewSet(viewsets.ReadOnlyModelViewSet):
 
 class SubscriptionViewSet(viewsets.ModelViewSet):
     """
-    API endpoint pour les abonnements
+    API endpoint pour les abonnements.
+    Les utilisateurs ne voient que leurs propres abonnements ;
+    le staff conserve l'acces global.
     """
     queryset = Subscription.objects.select_related('user', 'plan')
     serializer_class = SubscriptionSerializer
     permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['user', 'plan', 'status']
-    
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        if self.request.user.is_staff:
+            return qs
+        return qs.filter(user=self.request.user)
+
     @action(detail=False, methods=['get'])
     def my_subscription(self, request):
         """
-        Récupérer l'abonnement de l'utilisateur connecté
+        Recuperer l'abonnement de l'utilisateur connecte
         """
         try:
             subscription = self.queryset.filter(user=request.user).latest('created_at')
@@ -462,14 +498,16 @@ class SubscriptionViewSet(viewsets.ModelViewSet):
             return Response(serializer.data)
         except Subscription.DoesNotExist:
             return Response(
-                {'error': 'Aucun abonnement trouvé'},
+                {'error': 'Aucun abonnement trouve'},
                 status=status.HTTP_404_NOT_FOUND
             )
 
 
 class TransactionViewSet(viewsets.ReadOnlyModelViewSet):
     """
-    API endpoint pour les transactions
+    API endpoint pour les transactions.
+    Les utilisateurs ne voient que leurs propres transactions ;
+    le staff conserve l'acces global.
     """
     queryset = Transaction.objects.select_related('user', 'subscription', 'currency')
     serializer_class = TransactionSerializer
@@ -478,11 +516,17 @@ class TransactionViewSet(viewsets.ReadOnlyModelViewSet):
     filterset_fields = ['user', 'subscription', 'transaction_type', 'status']
     ordering_fields = ['created_at']
     ordering = ['-created_at']
-    
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        if self.request.user.is_staff:
+            return qs
+        return qs.filter(user=self.request.user)
+
     @action(detail=False, methods=['get'])
     def my_transactions(self, request):
         """
-        Récupérer les transactions de l'utilisateur connecté
+        Recuperer les transactions de l'utilisateur connecte
         """
         transactions = self.queryset.filter(user=request.user)
         serializer = self.get_serializer(transactions, many=True)
@@ -491,7 +535,7 @@ class TransactionViewSet(viewsets.ReadOnlyModelViewSet):
 
 class PaymentMethodViewSet(viewsets.ReadOnlyModelViewSet):
     """
-    API endpoint pour les méthodes de paiement
+    API endpoint pour les methodes de paiement
     """
     queryset = PaymentMethod.objects.all()
     serializer_class = PaymentMethodSerializer
@@ -502,7 +546,9 @@ class PaymentMethodViewSet(viewsets.ReadOnlyModelViewSet):
 
 class ManualPaymentViewSet(viewsets.ModelViewSet):
     """
-    API endpoint pour les paiements manuels
+    API endpoint pour les paiements manuels.
+    Les utilisateurs ne voient que leurs propres paiements ;
+    le staff conserve l'acces global (validation des paiements).
     """
     queryset = ManualPayment.objects.select_related('user', 'subscription_plan', 'payment_method', 'currency')
     serializer_class = ManualPaymentSerializer
@@ -511,19 +557,25 @@ class ManualPaymentViewSet(viewsets.ModelViewSet):
     filterset_fields = ['user', 'subscription_plan', 'payment_method', 'status']
     ordering_fields = ['created_at']
     ordering = ['-created_at']
-    
+
     def get_serializer_class(self):
         if self.action == 'create':
             return ManualPaymentCreateSerializer
         return ManualPaymentSerializer
-    
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        if self.request.user.is_staff:
+            return qs
+        return qs.filter(user=self.request.user)
+
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
-    
+
     @action(detail=False, methods=['get'])
     def my_payments(self, request):
         """
-        Récupérer les paiements manuels de l'utilisateur connecté
+        Recuperer les paiements manuels de l'utilisateur connecte
         """
         payments = self.queryset.filter(user=request.user)
         serializer = self.get_serializer(payments, many=True)
@@ -532,16 +584,16 @@ class ManualPaymentViewSet(viewsets.ModelViewSet):
 
 class SiteSettingsViewSet(viewsets.ReadOnlyModelViewSet):
     """
-    API endpoint pour les paramètres du site
+    API endpoint pour les parametres du site
     """
     queryset = SiteSettings.objects.all()
     serializer_class = SiteSettingsSerializer
     permission_classes = [AllowAny]
-    
+
     @action(detail=False, methods=['get'])
     def current(self, request):
         """
-        Récupérer les paramètres actuels du site
+        Recuperer les parametres actuels du site
         """
         settings = SiteSettings.get_settings()
         serializer = self.get_serializer(settings)

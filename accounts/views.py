@@ -17,11 +17,11 @@ def register(request):
         form = RegistrationForm(request.POST)
         if form.is_valid():
             user = form.save()
-            # Spécifier le backend d'authentification
+            # Specifier le backend d'authentification
             backend = get_backends()[0]
             user.backend = f"{backend.__module__}.{backend.__class__.__name__}"
             login(request, user)
-            messages.success(request, "Votre compte a été créé avec succès!")
+            messages.success(request, "Votre compte a ete cree avec succes!")
             return redirect("dashboard")
     else:
         form = RegistrationForm(initial={"role": role})
@@ -41,7 +41,7 @@ def login_view(request):
             user = authenticate(request, username=email, password=password)
             if user is not None:
                 login(request, user)
-                messages.success(request, "Connexion réussie!")
+                messages.success(request, "Connexion reussie!")
                 return redirect("dashboard")
             messages.error(request, "Email ou mot de passe incorrect.")
     else:
@@ -53,13 +53,14 @@ def login_view(request):
 @login_required
 def logout_view(request):
     logout(request)
-    messages.success(request, "Vous avez été déconnecté.")
+    messages.success(request, "Vous avez ete deconnecte.")
     return redirect("login")
 
 
 @login_required
 def dashboard(request):
     user = request.user
+
     if user.is_influencer:
         return redirect("influencer_dashboard")
     if user.is_advertiser:

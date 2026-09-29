@@ -20,9 +20,11 @@ RUN mkdir -p /app/staticfiles /app/mediafiles
 
 EXPOSE 8000
 
+# Le superutilisateur doit etre cree manuellement via :
+#   python manage.py createsuperuser
+# ou via create_admin.py avec les variables DJANGO_SUPERUSER_EMAIL / DJANGO_SUPERUSER_PASSWORD.
 CMD ["sh", "-c", "python manage.py migrate && \
     python manage.py collectstatic --noinput && \
     python manage.py load_countries && \
     python manage.py load_currencies && \
-    python create_admin.py && \
     gunicorn wariblo.wsgi:application --bind 0.0.0.0:8000 --workers 3 --timeout 120"]
