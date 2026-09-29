@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
+from django.db.models import Count
 from decimal import Decimal
 from core.decorators import advertiser_required
 from .forms import CampaignForm
@@ -12,10 +13,8 @@ def campaign_list(request):
         status='open'
     ).select_related(
         'advertiser__user'
-    ).prefetch_related(
-        'applications__influencer__user'
     )
-    
+
     # Filtres
     niche_filter = request.GET.get('niche')
     platform_filter = request.GET.get('platform')
@@ -23,8 +22,8 @@ def campaign_list(request):
     budget_max = request.GET.get('budget_max')
     q = request.GET.get('q')
     sort = request.GET.get('sort', '-created_at')
-    
-    # Recommandations personnalisées pour influenceurs connectés
+
+    # Recommandations personnalisees pour influenceurs connectes
     recommended_campaigns = []
     if request.user.is_authenticated and request.user.is_influencer:
         try:
@@ -38,7 +37,7 @@ def campaign_list(request):
                 user_platforms.append('tiktok')
             if profile.youtube_subscribers > 0:
                 user_platforms.append('youtube')
-            
+
             # Filtrer par niche et plateformes de l'utilisateur
             recommended = campaigns.filter(niche=user_niche)
             if user_platforms:
@@ -46,15 +45,15 @@ def campaign_list(request):
             recommended_campaigns = list(recommended[:6])
         except InfluencerProfile.DoesNotExist:
             pass
-    
-    # Recherche par mots-clés
+
+    # Recherche par mots-cles
     if q:
         campaigns = campaigns.filter(
             title__icontains=q
         ) | campaigns.filter(
             description__icontains=q
         )
-    
+
     # Filtres existants
     if niche_filter:
         campaigns = campaigns.filter(niche=niche_filter)
@@ -64,17 +63,23 @@ def campaign_list(request):
         campaigns = campaigns.filter(budget__gte=budget_min)
     if budget_max:
         campaigns = campaigns.filter(budget__lte=budget_max)
-    
+
     # Tri
-    if sort in ['-created_at', 'created_at', '-budget', 'budget', '-applications_count']:
+    if sort in ['-created_at', 'created_at', '-budget', 'budget']:
         campaigns = campaigns.order_by(sort)
+    elif sort in ['-applications_count', 'applications_count']:
+        # Annotation necessaire : applications_count n'est pas un champ de modele
+        order = '-applications_count' if sort == '-applications_count' else 'applications_count'
+        campaigns = campaigns.annotate(
+            applications_count=Count('applications')
+        ).order_by(order)
     else:
         campaigns = campaigns.order_by('-created_at')
-    
+
     paginator = Paginator(campaigns, 12)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    
+
     context = {
         'page_obj': page_obj,
         'campaigns': page_obj,
@@ -95,28 +100,28 @@ def campaign_detail(request, pk):
         ),
         pk=pk
     )
-    
+
     has_applied = False
     match_score = 0
     match_details = []
-    
+
     if request.user.is_authenticated and request.user.is_influencer:
         try:
             from influencers.models import InfluencerProfile
             profile = request.user.influencer_profile
             has_applied = campaign.applications.filter(influencer=profile).exists()
-            
+
             # Calculer le score de matching
             score = 0
             details = []
-            
+
             # Matching niche (40 points)
             if profile.niche == campaign.niche:
                 score += 40
                 details.append(f"✅ Niche: {campaign.niche} correspond à votre profil")
             else:
                 details.append(f"❌ Niche: {campaign.niche} différent de votre profil ({profile.niche})")
-            
+
             # Matching plateforme (30 points)
             user_platforms = []
             if profile.instagram_followers > 0:
@@ -125,7 +130,7 @@ def campaign_detail(request, pk):
                 user_platforms.append('tiktok')
             if profile.youtube_subscribers > 0:
                 user_platforms.append('youtube')
-            
+
             if campaign.platform in user_platforms:
                 score += 30
                 details.append(f"✅ Plateforme: {campaign.platform} correspond à vos réseaux")
@@ -134,7 +139,7 @@ def campaign_detail(request, pk):
                 details.append(f"⚠️ Plateforme: Multiple (vous avez {len(user_platforms)} réseaux)")
             else:
                 details.append(f"❌ Plateforme: {campaign.platform} ne correspond pas à vos réseaux")
-            
+
             # Matching budget (30 points)
             if profile.rate_per_post:
                 if campaign.budget >= profile.rate_per_post * Decimal('0.8') and campaign.budget <= profile.rate_per_post * Decimal('1.2'):
@@ -147,18 +152,18 @@ def campaign_detail(request, pk):
                     details.append(f"❌ Budget: En dessous de votre prix")
             else:
                 details.append(f"⚠️ Budget: Prix non défini dans votre profil")
-            
+
             match_score = score
             match_details = details
         except InfluencerProfile.DoesNotExist:
             pass
-    
+
     breadcrumbs = [
         {'url': '/', 'label': 'Accueil'},
         {'url': '/campaigns/', 'label': 'Campagnes'},
         {'url': None, 'label': campaign.title}
     ]
-    
+
     context = {
         'campaign': campaign,
         'has_applied': has_applied,
@@ -176,7 +181,7 @@ def campaign_create(request):
         profile = request.user.advertiser_profile
     except AdvertiserProfile.DoesNotExist:
         return redirect('advertiser_profile_create')
-    
+
     if request.method == 'POST':
         form = CampaignForm(request.POST)
         if form.is_valid():
@@ -186,17 +191,17 @@ def campaign_create(request):
             return redirect('campaign_detail', pk=campaign.pk)
     else:
         form = CampaignForm()
-    
+
     return render(request, 'campaigns/form.html', {'form': form})
 
 
 @advertiser_required
 def campaign_edit(request, pk):
     campaign = get_object_or_404(Campaign, pk=pk)
-    
+
     if campaign.advertiser.user != request.user:
         return redirect('dashboard')
-    
+
     if request.method == 'POST':
         form = CampaignForm(request.POST, instance=campaign)
         if form.is_valid():
@@ -204,21 +209,19 @@ def campaign_edit(request, pk):
             return redirect('campaign_detail', pk=campaign.pk)
     else:
         form = CampaignForm(instance=campaign)
-    
+
     return render(request, 'campaigns/form.html', {'form': form, 'campaign': campaign})
 
 
 @advertiser_required
 def campaign_delete(request, pk):
     campaign = get_object_or_404(Campaign, pk=pk)
-    
+
     if campaign.advertiser.user != request.user:
         return redirect('dashboard')
-    
+
     if request.method == 'POST':
         campaign.delete()
         return redirect('advertiser_campaigns')
-    
+
     return render(request, 'campaigns/delete_confirm.html', {'campaign': campaign})
-
-
