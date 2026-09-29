@@ -8,20 +8,21 @@ from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
-# Créer un superuser avec des identifiants par défaut
-email = 'afletounoudouprince5@gmail.com'
-password = 'waribloprince5@gmail'
+# Creation d'un superutilisateur uniquement a partir des variables d'environnement.
+# Aucun identifiant n'est stocke dans le depot.
+email = os.getenv('DJANGO_SUPERUSER_EMAIL')
+password = os.getenv('DJANGO_SUPERUSER_PASSWORD')
 
-if not User.objects.filter(email=email).exists():
-    user = User.objects.create_user(
+if not email or not password:
+    print('DJANGO_SUPERUSER_EMAIL ou DJANGO_SUPERUSER_PASSWORD non definis : aucun superutilisateur cree.')
+elif not User.objects.filter(email=email).exists():
+    User.objects.create_user(
         email=email,
         password=password,
         role='admin',
         is_staff=True,
         is_superuser=True
     )
-    print(f"Superuser créé avec succès!")
-    print(f"Email: {email}")
-    print(f"Mot de passe: {password}")
+    print('Superutilisateur cree avec succes.')
 else:
-    print(f"Un utilisateur avec l'email {email} existe déjà.")
+    print('Un utilisateur avec cet email existe deja.')
